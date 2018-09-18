@@ -2,7 +2,7 @@
 {
 	using Type = System.UInt16;
 
-	struct Coord
+	struct Coord 
 	{
 		public Coord(int x, int y) : this()
 		{

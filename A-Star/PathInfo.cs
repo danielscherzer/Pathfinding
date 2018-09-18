@@ -2,10 +2,10 @@
 
 namespace Example
 {
-	struct PathInfo
+	struct PathInfo<NODE>
 	{
-		public IReadOnlyList<Coord> Path;
-		public IEnumerable<Coord> Visited;
-		public IReadOnlyDictionary<Coord, Coord> CameFrom;
+		public IReadOnlyList<NODE> Path;
+		public IEnumerable<NODE> Visited;
+		public IReadOnlyDictionary<NODE, NODE> CameFrom;
 	}
 }

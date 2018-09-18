@@ -61,9 +61,9 @@ namespace Example
 
 		public void DrawObstacles(IGrid grid)
 		{
-			for (int u = 0; u < grid.Width; ++u)
+			for (ushort u = 0; u < grid.Width; ++u)
 			{
-				for (int v = 0; v < grid.Height; ++v)
+				for (ushort v = 0; v < grid.Height; ++v)
 				{
 					var min = Convert(new Coord(u, v));
 					if (!grid.IsPassable(u, v))

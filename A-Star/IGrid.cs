@@ -2,9 +2,9 @@
 {
 	public interface IGrid
 	{
-		bool IsPassable(int x, int y);
+		bool IsPassable(ushort x, ushort y);
 
-		int Height { get; }
-		int Width { get; }
+		ushort Height { get; }
+		ushort Width { get; }
 	}
 }

@@ -16,16 +16,16 @@
 			}
 		}
 
-		public bool this[int x, int y]
+		public bool this[ushort x, ushort y]
 		{
 			get { return grid[x, y]; }
-			set { grid[x, y] = value; }
+			set { grid[x % Width, y % Height] = value; }
 		}
 
-		public int Height => grid.GetLength(1);
+		public ushort Height => (ushort)grid.GetLength(1);
 
-		public int Width => grid.GetLength(0);
+		public ushort Width => (ushort)grid.GetLength(0);
 
-		public bool IsPassable(int x, int y) => grid[x, y];
+		public bool IsPassable(ushort x, ushort y) => grid[x, y];
 	}
 }

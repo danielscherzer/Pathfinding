@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
@@ -12,7 +13,8 @@ namespace Example
 	{
 		private readonly Model model;
 		private readonly Visual visual;
-		private PathInfo path;
+		private IEnumerator<PathInfo<Coord>> iterator;
+		private PathInfo<Coord> path;
 
 		public bool ShowArrows { get; internal set; }
 
@@ -22,21 +24,65 @@ namespace Example
 			visual = new Visual(model.Grid);
 		}
 
-		internal void NewStartGoal() => model.NewStartGoal();
+		private void NewFindPath()
+		{
+			if (iterator is null) return;
+			StepMode();
+		}
+
+		private void StepMode()
+		{
+			iterator = model.FindPath().GetEnumerator();
+			iterator.MoveNext();
+			path = iterator.Current;
+		}
+
+		internal void NewStartGoal()
+		{
+			model.NewStartGoal();
+			NewFindPath();
+		}
 
 		internal void ToggleElement(Vector2 coord)
 		{
 			var x = coord.X * .5f + .5f;
 			var y = coord.Y * .5f + .5f;
-			var modelX = (int)(x * model.Grid.Width);
-			var modelY = (int)(y * model.Grid.Height);
+			var modelX = (ushort)(x * model.Grid.Width);
+			var modelY = (ushort)(y * model.Grid.Height);
 
 			model.ToggleElement(modelX, modelY);
+			NewFindPath();
+		}
+
+		internal void SolveMode()
+		{
+			iterator = null;
 		}
 
 		internal void NextAlgorithm()
 		{
 			model.NextAlgorithm();
+			NewFindPath();
+		}
+
+		internal void Step()
+		{
+			if (iterator is null)
+			{
+				StepMode();
+			}
+			else
+			{
+				if (iterator.MoveNext())
+				{
+					path = iterator.Current;
+				}
+				else
+				{
+					iterator.Reset();
+				}
+			}
+			Title = $"grid size={model.Grid.Width}x{model.Grid.Height}; {model.AlgorithmName}; path length={path.Path.Count}";
 		}
 
 		/// <summary>
@@ -74,9 +120,9 @@ namespace Example
 				visual.DrawCell(c, 0.5f);
 			}
 			GL.Color3(Color.Green);
-			visual.DrawCell(model.Start, .5f);
+			visual.DrawCell(model.Start, 1.5f);
 			GL.Color3(Color.Red);
-			visual.DrawCell(model.Goal, .5f);
+			visual.DrawCell(model.Goal, 1.5f);
 			SwapBuffers(); // buffer swap needed for double buffering
 		}
 
@@ -87,9 +133,13 @@ namespace Example
 		protected override void OnUpdateFrame(FrameEventArgs arguments)
 		{
 			base.OnUpdateFrame(arguments);
+			if (!(iterator is null)) return;
 			var sw = new Stopwatch();
 			sw.Start();
-			path = model.FindPath();
+			foreach (var step in model.FindPath())
+			{
+				path = step;
+			}
 			sw.Stop();
 			Title = $"grid size={model.Grid.Width}x{model.Grid.Height}; {model.AlgorithmName}; path length={path.Path.Count} in {sw.ElapsedMilliseconds}ms";
 		}

@@ -1,6 +1,7 @@
 using OpenTK;
 using OpenTK.Input;
 using System;
+using System.Collections.Generic;
 
 namespace Example
 {
@@ -10,26 +11,25 @@ namespace Example
 		{
 			var window = new MyWindow(); // create the example window
 			window.WindowState = WindowState.Maximized; // render the window in maximized mode
+			var keyBindings = new Dictionary<Key, Tuple<Action, string>>
+			{
+				[Key.Escape] = new Tuple<Action, string>(() => window.Close(), "closes application."),
+				[Key.Space] = new Tuple<Action, string>(() => window.NewStartGoal(), "creates new random start and goal positions."),
+				[Key.H] = new Tuple<Action, string>(() => window.ShowArrows = !window.ShowArrows, "toggles helpers."),
+				[Key.Tab] = new Tuple<Action, string>(() => window.NextAlgorithm(), "cycles algorithm."),
+				[Key.N] = new Tuple<Action, string>(() => window.SolveMode(), "solves algorithm in one step."),
+				[Key.S] = new Tuple<Action, string>(() => window.Step(), "activates step mode for algorithm."),
+			};
 
-			Console.WriteLine($"{Key.Space} creates new random start and goal positions.");
-			Console.WriteLine($"{Key.H} toggles helpers.");
-			Console.WriteLine($"{Key.A} cycles algorithm.");
+			foreach(var keyBinding in keyBindings)
+			{
+				Console.WriteLine($"{keyBinding.Key.ToString().PadRight(10,'.')} {keyBinding.Value.Item2}");
+			}
 			window.KeyDown += (s, a) =>
 			{
-				switch(a.Key)
+				if(keyBindings.TryGetValue(a.Key, out var data))
 				{
-					case Key.Escape:
-						window.Close();
-						break;
-					case Key.Space:
-						window.NewStartGoal();
-						break;
-					case Key.H:
-						window.ShowArrows = !window.ShowArrows;
-						break;
-					case Key.A:
-						window.NextAlgorithm();
-						break;
+					data.Item1();
 				}
 			};
 
