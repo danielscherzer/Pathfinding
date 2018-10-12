@@ -23,6 +23,7 @@ namespace Example
 			rnd = new Random(12);
 
 			CreateRandomWalkObstacles();
+			//CreateMazeObstacles();
 			//NewStartGoal();
 
 			algorithms = new List<Algorithm>
@@ -33,6 +34,40 @@ namespace Example
 				BreathFirstSearch,
 				UniformCostSearch,
 			};
+		}
+
+		private void CreateMazeObstacles()
+		{
+			//full of obstacles
+			for(ushort x = 0; x < Grid.Width; ++x)
+			{
+				for (ushort y = 0; y < Grid.Height; ++y)
+				{
+					grid[x, y] = false;
+				}
+			}
+			var openSpace = Grid.Width * Grid.Height / 2;
+			var walkLen = Math.Min(Grid.Width, Grid.Height) / 4;
+			for (int i = 0; i < openSpace; i += walkLen)
+			{
+				//do a random walk with length walkLen
+				var x = (ushort)rnd.Next(Grid.Width);
+				var y = (ushort)rnd.Next(Grid.Height);
+				grid[x, y] = true;
+				//choose a random direction
+				var dir = rnd.Next(4);
+				for (int j = 0; j < walkLen; ++j)
+				{
+					switch (dir)
+					{
+						case 0: ++x; break;
+						case 1: ++y; break;
+						case 2: --x; break;
+						case 3: --y; break;
+					}
+					grid[x, y] = true;
+				}
+			}
 		}
 
 		private void CreateRandomWalkObstacles()

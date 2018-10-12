@@ -24,34 +24,22 @@ namespace Example
 			visual = new Visual(model.Grid);
 		}
 
-		private void NewFindPath()
-		{
-			if (iterator is null) return;
-			StepMode();
-		}
-
-		private void StepMode()
-		{
-			iterator = model.FindPath().GetEnumerator();
-			iterator.MoveNext();
-			path = iterator.Current;
-		}
-
 		internal void NewStartGoal()
 		{
 			model.NewStartGoal();
-			NewFindPath();
+			iterator = null;
 		}
 
-		internal void ToggleElement(Vector2 coord)
+		internal void ClickAt(int pixelX, int pixelY)
 		{
+			var coord = ConvertWindowPixelCoords(pixelX, pixelY); //convert pixel coordinates to [-1,1]²
 			var x = coord.X * .5f + .5f;
 			var y = coord.Y * .5f + .5f;
 			var modelX = (ushort)(x * model.Grid.Width);
 			var modelY = (ushort)(y * model.Grid.Height);
 
 			model.ToggleElement(modelX, modelY);
-			NewFindPath();
+			iterator = null;
 		}
 
 		internal void SolveMode()
@@ -62,25 +50,18 @@ namespace Example
 		internal void NextAlgorithm()
 		{
 			model.NextAlgorithm();
-			NewFindPath();
+			iterator = null;
 		}
 
 		internal void Step()
 		{
 			if (iterator is null)
 			{
-				StepMode();
+				iterator = model.FindPath().GetEnumerator();
 			}
-			else
+			if (iterator.MoveNext())
 			{
-				if (iterator.MoveNext())
-				{
-					path = iterator.Current;
-				}
-				else
-				{
-					iterator.Reset();
-				}
+				path = iterator.Current;
 			}
 			Title = $"grid size={model.Grid.Width}x{model.Grid.Height}; {model.AlgorithmName}; path length={path.Path.Count}";
 		}
@@ -151,8 +132,14 @@ namespace Example
 		protected override void OnResize(EventArgs arguments)
 		{
 			base.OnResize(arguments); // call the GameWindows implementation before executing the example code
+			
+			GL.Viewport(0, 0, Width, Height);
+		}
 
-			GL.Viewport(0, 0, Width, Height); // tell OpenGL to use the whole window for drawing
+		private Vector2 ConvertWindowPixelCoords(int pixelX, int pixelY)
+		{
+			var coord01 = new Vector2(pixelX / (Width - 1f), 1f - pixelY / (Height - 1f));
+			return coord01 * 2f - Vector2.One;
 		}
 	}
 }
