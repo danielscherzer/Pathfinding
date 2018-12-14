@@ -194,7 +194,7 @@ namespace Example
 		private IEnumerable<PathInfo<Coord>> AStarSearchStraight(Coord start, Coord goal, Func<Coord, IEnumerable<Coord>> walkableNeighbors)
 		{
 			//use straightness as tie breaker
-			float h(Coord a) => DiagonalDistance(a, goal) + Straightness(start, a, goal) * 0.001f;
+			float h(Coord a) => DiagonalDistance(a, goal) + Straightness(start, a, goal) * 0.01f;
 			return PathFinding.AStarSearch(start, goal, walkableNeighbors, GridCost, h, () => Coord.None);
 		}
 
