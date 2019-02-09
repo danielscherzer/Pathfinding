@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Example
+namespace PathFinder
 {
-	struct PriorityPair<NODE> : IComparable<PriorityPair<NODE>>
+	public struct PriorityPair<NODE> : IComparable<PriorityPair<NODE>>
 	{
 		public PriorityPair(float priority, NODE coord) : this()
 		{

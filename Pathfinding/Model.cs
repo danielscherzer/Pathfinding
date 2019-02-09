@@ -1,22 +1,26 @@
-﻿using System;
+﻿using PathFinder;
+using System;
 using System.Collections.Generic;
+using static Example.GridPathFinder;
 
 namespace Example
 {
 	class Model
 	{
-		const int scale = 8;
+		const ushort scale = 4;
 		private readonly Grid grid = new Grid(32 * scale, 18 * scale);
 		private readonly Random rnd;
 
-		private delegate IEnumerable<PathInfo<Coord>> Algorithm(Coord start, Coord goal, Func<Coord, IEnumerable<Coord>> walkableNeighbors);
+		private IEnumerator<PathInfo<Coord>> iterator;
 		private readonly IReadOnlyList<Algorithm> algorithms;
 		private int algorithmIndex = 0;
 
 		public string AlgorithmName => algorithms[algorithmIndex].Method.Name;
 		public IGrid Grid => grid;
+
 		public Coord Start { get; private set; } = new Coord(0, 0);
 		public Coord Goal { get; private set; } = new Coord(254, 140);
+		public PathInfo<Coord> Path { get; private set; }
 
 		public Model()
 		{
@@ -39,20 +43,20 @@ namespace Example
 		private void CreateMazeObstacles()
 		{
 			//full of obstacles
-			for(ushort x = 0; x < Grid.Width; ++x)
+			for(ushort x = 0; x < Grid.Columns; ++x)
 			{
-				for (ushort y = 0; y < Grid.Height; ++y)
+				for (ushort y = 0; y < Grid.Rows; ++y)
 				{
 					grid[x, y] = false;
 				}
 			}
-			var openSpace = Grid.Width * Grid.Height / 2;
-			var walkLen = Math.Min(Grid.Width, Grid.Height) / 4;
+			var openSpace = Grid.Columns * Grid.Rows / 2;
+			var walkLen = Math.Min(Grid.Columns, Grid.Rows) / 4;
 			for (int i = 0; i < openSpace; i += walkLen)
 			{
 				//do a random walk with length walkLen
-				var x = (ushort)rnd.Next(Grid.Width);
-				var y = (ushort)rnd.Next(Grid.Height);
+				var x = (ushort)rnd.Next(Grid.Columns);
+				var y = (ushort)rnd.Next(Grid.Rows);
 				grid[x, y] = true;
 				//choose a random direction
 				var dir = rnd.Next(4);
@@ -65,20 +69,43 @@ namespace Example
 						case 2: --x; break;
 						case 3: --y; break;
 					}
-					grid[x, y] = true;
+					SetGridModulo(x, y, true);
 				}
+			}
+		}
+
+		internal void SolveMode() => iterator = null;
+
+		internal void Step()
+		{
+			if (iterator is null)
+			{
+				iterator = FindPath().GetEnumerator();
+			}
+			if (iterator.MoveNext())
+			{
+				Path = iterator.Current;
+			}
+		}
+
+		internal void Update()
+		{
+			if (!(iterator is null)) return;
+			foreach (var step in FindPath())
+			{
+				Path = step;
 			}
 		}
 
 		private void CreateRandomWalkObstacles()
 		{
-			var obstacles = Grid.Width * Grid.Height / 2;
-			var walkLen = 4 * Math.Min(Grid.Width, Grid.Height);
+			var obstacles = Grid.Columns * Grid.Rows / 2;
+			var walkLen = 4 * Math.Min(Grid.Columns, Grid.Rows);
 			for (int i = 0; i < obstacles; i += walkLen)
 			{
 				//do a random walk with length walkLen
-				var x = (ushort)rnd.Next(Grid.Width);
-				var y = (ushort)rnd.Next(Grid.Height);
+				var x = (ushort)rnd.Next(Grid.Columns);
+				var y = (ushort)rnd.Next(Grid.Rows);
 				grid[x, y] = false;
 				for (int j = 0; j < walkLen; ++j)
 				{
@@ -92,19 +119,26 @@ namespace Example
 						case 3: --y; break;
 							//case 4: ++x; ++y; break;
 					}
-					grid[x, y] = false;
+					SetGridModulo(x, y, false);
 				}
 			}
+		}
+
+		private void SetGridModulo(ushort x, ushort y, bool value)
+		{
+			grid[(ushort)(x % Grid.Columns), (ushort)(y % Grid.Rows)] = value;
 		}
 
 		internal void NextAlgorithm()
 		{
 			algorithmIndex = (algorithmIndex + 1) % algorithms.Count;
+			iterator = null;
 		}
 
 		internal void ToggleElement(ushort x, ushort y)
 		{
 			grid[x, y] = !grid[x, y];
+			iterator = null;
 		}
 
 		internal IEnumerable<PathInfo<Coord>> FindPath()
@@ -113,10 +147,10 @@ namespace Example
 
 			IEnumerable<Coord> Walkables(IEnumerable<Coord> points)
 			{
-				foreach (var p in points) if (grid.IsPassable(p.X, p.Y)) yield return p;
+				foreach (var p in points) if (grid.IsPassable(p.Column, p.Row)) yield return p;
 			}
 
-			IEnumerable<Coord> WalkableNeighbors(Coord current) => Walkables(Get8Neighbors(current));
+			IEnumerable<Coord> WalkableNeighbors(Coord current) => Walkables(grid.Get8Neighbors(current));
 
 			foreach(var step in algorithm(Start, Goal, WalkableNeighbors)) yield return step;
 		}
@@ -128,108 +162,14 @@ namespace Example
 				Coord pos;
 				do
 				{
-					pos = new Coord(rnd.Next(Grid.Width), rnd.Next(Grid.Height));
-				} while (!Grid.IsPassable(pos.X, pos.Y));
+					pos = new Coord(rnd.Next(Grid.Columns), rnd.Next(Grid.Rows));
+				} while (!Grid.IsPassable(pos.Column, pos.Row));
 				return pos;
 			}
 
 			Start = FindRandomPassablePosition();
 			Goal = FindRandomPassablePosition();
-		}
-
-		private float GridCost(Coord a, Coord b)
-		{
-			var dx = Math.Abs(a.X - b.X);
-			var dy = Math.Abs(a.Y - b.Y);
-			var D2 = MathF.Sqrt(2f);
-			return dx + dy > 1 ? D2: 1f;
-		}
-
-		private static float ManhattanDistance(Coord a, Coord b)
-		{
-			var dx = Math.Abs(a.X - b.X);
-			var dy = Math.Abs(a.Y - b.Y);
-			return dx + dy;
-		}
-
-		private static float DiagonalDistance(Coord a, Coord b)
-		{
-			var dx = Math.Abs(a.X - b.X);
-			var dy = Math.Abs(a.Y - b.Y);
-			var D = 1f;
-			var D2 = MathF.Sqrt(2f);
-			return D * (dx + dy) + (D2 - 2f * D) * Math.Min(dx, dy);
-		}
-
-		private static float Straightness(in Coord start, in Coord current, in Coord goal)
-		{
-			var dx1 = current.X - goal.X;
-			var dy1 = current.Y - goal.Y;
-			var dx2 = start.X - goal.X;
-			var dy2 = start.Y - goal.Y;
-			return Math.Abs(dx1 * dy2 - dx2 * dy1);
-		}
-
-		private IEnumerable<PathInfo<Coord>> BreathFirstSearch(Coord start, Coord goal, Func<Coord, IEnumerable<Coord>> walkableNeighbors)
-		{
-			return PathFinding.BreathFirstSearch(start, goal, walkableNeighbors, () => Coord.None);
-		}
-
-		private IEnumerable<PathInfo<Coord>> UniformCostSearch(Coord start, Coord goal, Func<Coord, IEnumerable<Coord>> walkableNeighbors)
-		{
-			return PathFinding.UniformCostSearch(start, goal, walkableNeighbors, GridCost, () => Coord.None);
-		}
-
-		private IEnumerable<PathInfo<Coord>> GreedyBestFirstSearch(Coord start, Coord goal, Func<Coord, IEnumerable<Coord>> walkableNeighbors)
-		{
-			return PathFinding.GreedyBestFirstSearch(start, goal, walkableNeighbors, (a) => DiagonalDistance(a, goal), () => Coord.None);
-		}
-
-		private IEnumerable<PathInfo<Coord>> AStarSearch(Coord start, Coord goal, Func<Coord, IEnumerable<Coord>> walkableNeighbors)
-		{
-			float h(Coord a) => DiagonalDistance(a, goal);
-			return PathFinding.AStarSearch(start, goal, walkableNeighbors, GridCost, h, () => Coord.None);
-		}
-
-		private IEnumerable<PathInfo<Coord>> AStarSearchStraight(Coord start, Coord goal, Func<Coord, IEnumerable<Coord>> walkableNeighbors)
-		{
-			//use straightness as tie breaker
-			float h(Coord a) => DiagonalDistance(a, goal) + Straightness(start, a, goal) * 0.01f;
-			return PathFinding.AStarSearch(start, goal, walkableNeighbors, GridCost, h, () => Coord.None);
-		}
-
-		private IEnumerable<Coord> Get4Neighbors(Coord pos)
-		{
-			var top = pos.Y < grid.Height - 1;
-			var bottom = 0 < pos.Y;
-			if (top) yield return new Coord(pos.X, pos.Y + 1);
-			if (bottom) yield return new Coord(pos.X, pos.Y - 1);
-			var left = 0 < pos.X;
-			if (left) yield return new Coord(pos.X - 1, pos.Y);
-			var right = pos.X < grid.Width - 1;
-			if (right) yield return new Coord(pos.X + 1, pos.Y);
-		}
-
-		private IEnumerable<Coord> Get8Neighbors(Coord pos)
-		{
-			var top = pos.Y < grid.Height - 1;
-			var bottom = 0 < pos.Y;
-			if (top) yield return new Coord(pos.X, pos.Y + 1);
-			if (bottom) yield return new Coord(pos.X, pos.Y - 1);
-			var left = 0 < pos.X;
-			if (left)
-			{
-				yield return new Coord(pos.X - 1, pos.Y);
-				if (top) yield return new Coord(pos.X - 1, pos.Y + 1);
-				if (bottom) yield return new Coord(pos.X - 1, pos.Y - 1);
-			}
-			var right = pos.X < grid.Width - 1;
-			if (right)
-			{
-				yield return new Coord(pos.X + 1, pos.Y);
-				if (top) yield return new Coord(pos.X + 1, pos.Y + 1);
-				if (bottom) yield return new Coord(pos.X + 1, pos.Y - 1);
-			}
+			iterator = null;
 		}
 	}
 }

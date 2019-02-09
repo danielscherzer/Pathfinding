@@ -4,12 +4,12 @@
 	{
 		private bool[,] grid;
 
-		public Grid(int width, int height)
+		public Grid(ushort columns, ushort rows)
 		{
-			grid = new bool[width, height];
-			for (int x = 0; x < Width; ++x)
+			grid = new bool[columns, rows];
+			for (int x = 0; x < Columns; ++x)
 			{
-				for (int y = 0; y < Height; ++y)
+				for (int y = 0; y < Rows; ++y)
 				{
 					grid[x, y] = true;
 				}
@@ -19,12 +19,12 @@
 		public bool this[ushort x, ushort y]
 		{
 			get { return grid[x, y]; }
-			set { grid[x % Width, y % Height] = value; }
+			set { grid[x, y] = value; }
 		}
 
-		public ushort Height => (ushort)grid.GetLength(1);
+		public ushort Rows => (ushort)grid.GetLength(1);
 
-		public ushort Width => (ushort)grid.GetLength(0);
+		public ushort Columns => (ushort)grid.GetLength(0);
 
 		public bool IsPassable(ushort x, ushort y) => grid[x, y];
 	}

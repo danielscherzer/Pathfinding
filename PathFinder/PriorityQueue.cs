@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
-namespace Example
+namespace PathFinder
 {
 	/// <summary>
+	/// A priority queue based on a heap using a <seealso cref="List{T}"/> as data container. 
 	/// From https://visualstudiomagazine.com/Articles/2012/11/01/Priority-Queues-with-C.aspx?Page=1
 	/// Smaller priority value means higher priority
 	/// </summary>
-	/// <typeparam name="T"></typeparam>
+	/// <typeparam name="T">Is required to implement <seealso cref="IComparable{T}"/>. All value types already do so.</typeparam>
 	public class PriorityQueue<T> where T : IComparable<T>
 	{
 		private List<T> data = new List<T>();
@@ -25,6 +27,7 @@ namespace Example
 				int pi = (ci - 1) / 2;
 				if (data[ci].CompareTo(data[pi]) >= 0)
 					break;
+				//Switch index ci and pi
 				T tmp = data[ci];
 				data[ci] = data[pi];
 				data[pi] = tmp;
@@ -78,11 +81,14 @@ namespace Example
 
 		public override string ToString()
 		{
-			string s = "";
+			var s = new StringBuilder();
 			for (int i = 0; i < data.Count; ++i)
-				s += data[i].ToString() + " ";
-			s += "count = " + data.Count;
-			return s;
+			{
+				s.Append(data[i]);
+				s.Append(' ');
+			}
+			s.Append($"count = {data.Count}");
+			return s.ToString();
 		}
 	}
 }

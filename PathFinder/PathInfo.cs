@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Example
+namespace PathFinder
 {
-	struct PathInfo<NODE>
+	public struct PathInfo<NODE>
 	{
 		public IReadOnlyList<NODE> Path;
 		public IEnumerable<NODE> Visited;

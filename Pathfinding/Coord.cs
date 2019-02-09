@@ -1,29 +1,27 @@
 ﻿namespace Example
 {
-	using Type = System.UInt16;
+	using ElementType = System.UInt16;
 
-	struct Coord 
+	public struct Coord
 	{
-		public Coord(int x, int y) : this()
+		public Coord(int column, int row)
 		{
-			X = (Type)x;
-			Y = (Type)y;
+			Column = (ElementType)column;
+			Row = (ElementType)row;
 		}
 
-		public Coord(Type x, Type y) : this()
+		public Coord(ElementType column, ElementType row) : this()
 		{
-			X = x;
-			Y = y;
+			Column = column;
+			Row = row;
 		}
 
-		public Type X { get; }
-		public Type Y { get; }
-
-		public static Coord None => new Coord(Type.MaxValue, Type.MaxValue);
+		public ElementType Column { get; }
+		public ElementType Row { get; }
 
 		public override string ToString()
 		{
-			return $"({X}, {Y})";
+			return $"({Column}, {Row})";
 		}
 	}
 }
