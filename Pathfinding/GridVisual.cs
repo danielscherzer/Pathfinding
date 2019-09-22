@@ -111,8 +111,9 @@ namespace Example
 
 		internal (ushort column, ushort row) TransformToGrid(Point point)
 		{
-			var coord = Bounds.FromWindowF(point); //convert pixel coordinates to [-1,1]²
-
+			var coord = Bounds.Transform(point); //convert pixel coordinates to [-1,1]²
+			var rect = new RectangleF(-1, -1, 2, 2);
+			var b = rect.Transform(coord);
 			var x = coord.X * .5f + .5f;
 			var y = coord.Y * .5f + .5f;
 			var column = (ushort)MathHelper.Clamp(x * grid.Columns, 0, grid.Columns - 1);

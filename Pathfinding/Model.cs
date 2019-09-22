@@ -24,7 +24,7 @@ namespace Example
 
 		public Model()
 		{
-			rnd = new Random(12);
+			rnd = new Random(24);
 
 			CreateRandomWalkObstacles();
 			//CreateMazeObstacles();
@@ -38,6 +38,8 @@ namespace Example
 				BreathFirstSearch,
 				UniformCostSearch,
 			};
+
+			NewStartGoal();
 		}
 
 		private void CreateMazeObstacles()

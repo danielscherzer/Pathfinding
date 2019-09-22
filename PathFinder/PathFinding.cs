@@ -51,9 +51,9 @@ namespace PathFinder
 						cameFrom[neighbor] = current;
 					}
 				}
-				yield return new PathInfo<NODE>() { Path = path, Visited = cameFrom.Keys, CameFrom = cameFrom };
+				yield return new PathInfo<NODE>() { Path = path, CameFrom = cameFrom };
 			}
-			yield return new PathInfo<NODE>() { Path = path, Visited = cameFrom.Keys, CameFrom = cameFrom };
+			yield return new PathInfo<NODE>() { Path = path, CameFrom = cameFrom };
 		}
 
 		public static IEnumerable<PathInfo<NODE>> UniformCostSearch<NODE>(NODE start, NODE goal, Func<NODE, IEnumerable<NODE>> neighborNodes
@@ -88,9 +88,9 @@ namespace PathFinder
 						costSoFar[next] = newCost;
 					}
 				}
-				yield return new PathInfo<NODE>() { Path = path, Visited = cameFrom.Keys, CameFrom = cameFrom };
+				yield return new PathInfo<NODE>() { Path = path, CameFrom = cameFrom };
 			}
-			yield return new PathInfo<NODE>() { Path = path, Visited = cameFrom.Keys, CameFrom = cameFrom };
+			yield return new PathInfo<NODE>() { Path = path, CameFrom = cameFrom };
 		}
 
 		public static IEnumerable<PathInfo<NODE>> GreedyBestFirstSearch<NODE>(NODE start, NODE goal, Func<NODE, IEnumerable<NODE>> neighborNodes
@@ -122,9 +122,9 @@ namespace PathFinder
 						cameFrom[neighbor] = current.Node;
 					}
 				}
-				yield return new PathInfo<NODE>() { Path = path, Visited = cameFrom.Keys, CameFrom = cameFrom };
+				yield return new PathInfo<NODE>() { Path = path, CameFrom = cameFrom };
 			}
-			yield return new PathInfo<NODE>() { Path = path, Visited = cameFrom.Keys, CameFrom = cameFrom };
+			yield return new PathInfo<NODE>() { Path = path, CameFrom = cameFrom };
 		}
 
 		public static IEnumerable<PathInfo<NODE>> AStarSearch<NODE>(NODE start, NODE goal, Func<NODE, IEnumerable<NODE>> neighborNodes
@@ -161,9 +161,9 @@ namespace PathFinder
 						costSoFar[next] = newCost;
 					}
 				}
-				yield return new PathInfo<NODE>() { Path = path, Visited = cameFrom.Keys, CameFrom = cameFrom };
+				yield return new PathInfo<NODE>() { Path = path, CameFrom = cameFrom };
 			}
-			yield return new PathInfo<NODE>() { Path = path, Visited = cameFrom.Keys, CameFrom = cameFrom };
+			yield return new PathInfo<NODE>() { Path = path, CameFrom = cameFrom };
 		}
 	}
 }
