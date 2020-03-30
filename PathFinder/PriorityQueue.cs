@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -12,7 +12,7 @@ namespace PathFinder
 	/// <typeparam name="T">Is required to implement <seealso cref="IComparable{T}"/>. All value types already do so.</typeparam>
 	public class PriorityQueue<T> where T : IComparable<T>
 	{
-		private List<T> data = new List<T>();
+		private readonly List<T> data = new List<T>();
 
 		public void Clear() => data.Clear();
 

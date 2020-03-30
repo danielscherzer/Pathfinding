@@ -20,11 +20,11 @@ namespace Example
 			view = new View(model);
 			var keyBindings = new Dictionary<Key, Tuple<Action, string>>
 			{
-				[Key.Escape] = new Tuple<Action, string>(() => Close(), "closes application."),
-				[Key.Space] = new Tuple<Action, string>(() => model.NewStartGoal(), "creates new random start and goal positions."),
-				[Key.H] = new Tuple<Action, string>(() => view.ShowArrows = !view.ShowArrows, "toggles helpers."),
-				[Key.Tab] = new Tuple<Action, string>(() => model.NextAlgorithm(), "cycles algorithm."),
-				[Key.S] = new Tuple<Action, string>(() => Step(), "activates step mode for algorithm."),
+				[Key.Escape] = new Tuple<Action, string>(() => Close(), "closes application"),
+				[Key.Space] = new Tuple<Action, string>(() => model.NewStartGoal(), "creates new random start and goal positions"),
+				[Key.A] = new Tuple<Action, string>(() => view.ShowArrows = !view.ShowArrows, "toggle arrows"),
+				[Key.Tab] = new Tuple<Action, string>(() => model.NextAlgorithm(), "cycles algorithm"),
+				[Key.S] = new Tuple<Action, string>(() => Step(), "activates step mode for algorithm"),
 			};
 
 			foreach (var keyBinding in keyBindings)

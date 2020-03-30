@@ -1,4 +1,4 @@
-﻿using PathFinder;
+using PathFinder;
 using System;
 using System.Collections.Generic;
 using static Example.GridPathFinder;

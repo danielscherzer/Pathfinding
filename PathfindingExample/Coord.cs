@@ -1,4 +1,4 @@
-﻿namespace Example
+namespace Example
 {
 	using ElementType = System.UInt16;
 

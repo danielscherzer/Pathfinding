@@ -1,4 +1,4 @@
-﻿using PathFinder;
+using PathFinder;
 using System;
 using System.Collections.Generic;
 
@@ -12,12 +12,12 @@ namespace Example
 
 		public static IEnumerable<PathInfo<Coord>> BreathFirstSearch(Coord start, Coord goal, Func<Coord, IEnumerable<Coord>> walkableNeighbors)
 		{
-			return PathFinding.BreathFirstSearch(start, goal, walkableNeighbors, NullCoord);
+			return PathFinding.BreadthFirst(start, goal, walkableNeighbors, NullCoord);
 		}
 
 		public static IEnumerable<PathInfo<Coord>> UniformCostSearch(Coord start, Coord goal, Func<Coord, IEnumerable<Coord>> walkableNeighbors)
 		{
-			return PathFinding.UniformCostSearch(start, goal, walkableNeighbors, IGridExtensions.GridStepCost, NullCoord);
+			return PathFinding.Dijkstra(start, goal, walkableNeighbors, IGridExtensions.GridStepCost, NullCoord);
 		}
 
 		public static IEnumerable<PathInfo<Coord>> GreedyBestFirstSearch(Coord start, Coord goal, Func<Coord, IEnumerable<Coord>> walkableNeighbors)

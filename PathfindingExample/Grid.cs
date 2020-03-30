@@ -1,4 +1,4 @@
-﻿namespace Example
+namespace Example
 {
 	internal class Grid : IGrid
 	{
