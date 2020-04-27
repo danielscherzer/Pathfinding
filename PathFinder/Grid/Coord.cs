@@ -1,4 +1,4 @@
-namespace Example.Grid
+namespace PathFinder.Grid
 {
 	using ElementType = System.UInt16;
 

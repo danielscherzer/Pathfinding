@@ -1,6 +1,6 @@
 namespace Example.Model
 {
-	public interface IGrid
+	public interface IReadOnlyGrid
 	{
 		bool IsPassable(ushort column, ushort row);
 

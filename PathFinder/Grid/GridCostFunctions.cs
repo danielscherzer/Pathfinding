@@ -1,6 +1,6 @@
 using System;
 
-namespace Example.Grid
+namespace PathFinder.Grid
 {
 	public static class GridCostFunctions
 	{

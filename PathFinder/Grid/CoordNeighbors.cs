@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Example.Grid
+namespace PathFinder.Grid
 {
 	public static class CoordNeighbors
 	{

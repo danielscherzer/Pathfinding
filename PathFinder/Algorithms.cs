@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace PathFinder
 {
-	public static class PathFinding
+	public static class Algorithms
 	{
 		/// <summary>
-		/// Create a path from <paramref name="start"/> to <paramref name="goal"/> from the cameForm list
+		/// Create a path from <paramref name="start"/> to <paramref name="goal"/> from the cameForm dictionary
 		/// </summary>
 		/// <typeparam name="NODE">Type of a graph node</typeparam>
 		/// <param name="start">node of the path</param>

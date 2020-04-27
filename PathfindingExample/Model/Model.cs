@@ -1,8 +1,8 @@
-using Example.Grid;
 using PathFinder;
+using PathFinder.Grid;
 using System;
 using System.Collections.Generic;
-using static Example.Grid.GridPathFinder;
+using static Example.Model.GridPathFinderAlgorithms;
 
 namespace Example.Model
 {
@@ -17,7 +17,7 @@ namespace Example.Model
 		private int algorithmIndex = 0;
 
 		public string AlgorithmName => algorithms[algorithmIndex].Method.Name;
-		public IGrid Grid => grid;
+		public IReadOnlyGrid Grid => grid;
 
 		public Coord Start { get; private set; } = new Coord(0, 0);
 		public Coord Goal { get; private set; } = new Coord(254, 140);
@@ -27,8 +27,8 @@ namespace Example.Model
 		{
 			rnd = new Random(24);
 
-			CreateRandomWalkObstacles();
-			//CreateMazeObstacles();
+			grid.CreateRandomWalkObstacles();
+			//grid.CreateMazeObstacles();
 			//NewStartGoal();
 
 			algorithms = new List<Algorithm>
@@ -41,40 +41,6 @@ namespace Example.Model
 			};
 
 			NewStartGoal();
-		}
-
-		private void CreateMazeObstacles()
-		{
-			//full of obstacles
-			for(ushort x = 0; x < Grid.Columns; ++x)
-			{
-				for (ushort y = 0; y < Grid.Rows; ++y)
-				{
-					grid[x, y] = false;
-				}
-			}
-			var openSpace = Grid.Columns * Grid.Rows / 2;
-			var walkLen = Math.Min(Grid.Columns, Grid.Rows) / 4;
-			for (int i = 0; i < openSpace; i += walkLen)
-			{
-				//do a random walk with length walkLen
-				var x = (ushort)rnd.Next(Grid.Columns);
-				var y = (ushort)rnd.Next(Grid.Rows);
-				grid[x, y] = true;
-				//choose a random direction
-				var dir = rnd.Next(4);
-				for (int j = 0; j < walkLen; ++j)
-				{
-					switch (dir)
-					{
-						case 0: ++x; break;
-						case 1: ++y; break;
-						case 2: --x; break;
-						case 3: --y; break;
-					}
-					SetGridModulo(x, y, true);
-				}
-			}
 		}
 
 		internal void SolveMode() => iterator = null;
@@ -100,38 +66,6 @@ namespace Example.Model
 			}
 		}
 
-		private void CreateRandomWalkObstacles()
-		{
-			var obstacles = Grid.Columns * Grid.Rows / 2;
-			var walkLen = 4 * Math.Min(Grid.Columns, Grid.Rows);
-			for (int i = 0; i < obstacles; i += walkLen)
-			{
-				//do a random walk with length walkLen
-				var x = (ushort)rnd.Next(Grid.Columns);
-				var y = (ushort)rnd.Next(Grid.Rows);
-				grid[x, y] = false;
-				for (int j = 0; j < walkLen; ++j)
-				{
-					//choose a random direction
-					var dir = rnd.Next(4);
-					switch (dir)
-					{
-						case 0: ++x; break;
-						case 1: ++y; break;
-						case 2: --x; break;
-						case 3: --y; break;
-							//case 4: ++x; ++y; break;
-					}
-					SetGridModulo(x, y, false);
-				}
-			}
-		}
-
-		private void SetGridModulo(ushort x, ushort y, bool value)
-		{
-			grid[(ushort)(x % Grid.Columns), (ushort)(y % Grid.Rows)] = value;
-		}
-
 		internal void NextAlgorithm()
 		{
 			algorithmIndex = (algorithmIndex + 1) % algorithms.Count;
@@ -148,14 +82,15 @@ namespace Example.Model
 		{
 			var algorithm = algorithms[algorithmIndex];
 
-			IEnumerable<Coord> Walkables(IEnumerable<Coord> points)
+			IEnumerable<Coord> WalkableNeighbors(Coord current)
 			{
-				foreach (var p in points) if (grid.IsPassable(p.Column, p.Row)) yield return p;
+				foreach(var neighbor in current.Get8Neighbors(grid.Columns, grid.Rows))
+				{
+					if (grid.IsPassable(neighbor.Column, neighbor.Row)) yield return neighbor;
+				}
 			}
 
-			IEnumerable<Coord> WalkableNeighbors(Coord current) => Walkables(current.Get8Neighbors(grid.Columns, grid.Rows));
-
-			foreach(var step in algorithm(Start, Goal, WalkableNeighbors)) yield return step;
+			foreach (var step in algorithm(Start, Goal, WalkableNeighbors)) yield return step;
 		}
 
 		internal void NewStartGoal()

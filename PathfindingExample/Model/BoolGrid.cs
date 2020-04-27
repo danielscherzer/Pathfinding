@@ -1,6 +1,6 @@
 namespace Example.Model
 {
-	internal class BoolGrid : IGrid
+	public class BoolGrid : IReadOnlyGrid
 	{
 		private readonly bool[,] grid;
 

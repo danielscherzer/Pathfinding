@@ -1,15 +1,16 @@
-using Example.Grid;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using PathFinder;
+using PathFinder.Grid;
 
 namespace Example.View
 {
-	internal class MainView : Bounded
+	internal class MainView
 	{
 		private readonly Style style;
 		private readonly Model.Model model;
 		private readonly GridVisual gridVisual;
+		private Rectangle bounds;
 
 		public MainView(Model.Model model)
 		{
@@ -29,22 +30,15 @@ namespace Example.View
 
 		internal void InputDown(Point point)
 		{
-			var coord = Bounds.Transform(point);
-			if (gridVisual.Contains(coord))
-			{
-				var (column, row) = gridVisual.TransformToGrid(point);
-				model.ToggleElement(column, row);
-			}
+			var coord = bounds.Transform(point); //convert pixel coordinates to [-1,1]²
+			var (column, row) = gridVisual.TransformToGrid(coord);
+			model.ToggleElement(column, row);
 		}
 
 		internal void Resize(int width, int height)
 		{
-			var startGrid = 0;
-			Bounds = new Rectangle(0, 0, width, height);
-			gridVisual.Bounds = new Rectangle(startGrid, 0, width - startGrid, height);
-
-			var deltaF = 2f * startGrid / (float)width;
-			gridVisual.BoundsF = new RectangleF(deltaF - 1f, -1f, 2f, 2f);
+			bounds = new Rectangle(0, 0, width, height);
+			GL.Viewport(bounds);
 		}
 	}
 }

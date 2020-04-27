@@ -1,10 +1,11 @@
 using PathFinder;
+using PathFinder.Grid;
 using System;
 using System.Collections.Generic;
 
-namespace Example.Grid
+namespace Example.Model
 {
-	public static class GridPathFinder
+	public static class GridPathFinderAlgorithms
 	{
 		public delegate IEnumerable<PathInfo<Coord>> Algorithm(Coord start, Coord goal, Func<Coord, IEnumerable<Coord>> nodeNeighbors);
 
@@ -20,30 +21,30 @@ namespace Example.Grid
 
 		public static IEnumerable<PathInfo<Coord>> BreathFirstSearch(Coord start, Coord goal, Func<Coord, IEnumerable<Coord>> walkableNeighbors)
 		{
-			return PathFinding.BreadthFirst(start, goal, walkableNeighbors, NullCoord);
+			return Algorithms.BreadthFirst(start, goal, walkableNeighbors, NullCoord);
 		}
 
 		public static IEnumerable<PathInfo<Coord>> DijkstraSearch(Coord start, Coord goal, Func<Coord, IEnumerable<Coord>> walkableNeighbors)
 		{
-			return PathFinding.Dijkstra(start, goal, walkableNeighbors, CostToNeighbor, NullCoord);
+			return Algorithms.Dijkstra(start, goal, walkableNeighbors, CostToNeighbor, NullCoord);
 		}
 
 		public static IEnumerable<PathInfo<Coord>> GreedyBestFirstSearch(Coord start, Coord goal, Func<Coord, IEnumerable<Coord>> walkableNeighbors)
 		{
-			return PathFinding.GreedyBestFirstSearch(start, goal, walkableNeighbors, (a) => GridCostFunctions.DiagonalDistance(a, goal), NullCoord);
+			return Algorithms.GreedyBestFirstSearch(start, goal, walkableNeighbors, (a) => GridCostFunctions.DiagonalDistance(a, goal), NullCoord);
 		}
 
 		public static IEnumerable<PathInfo<Coord>> AStarSearch(Coord start, Coord goal, Func<Coord, IEnumerable<Coord>> walkableNeighbors)
 		{
 			float h(Coord a) => GridCostFunctions.DiagonalDistance(a, goal);
-			return PathFinding.AStarSearch(start, goal, walkableNeighbors, CostToNeighbor, h, NullCoord);
+			return Algorithms.AStarSearch(start, goal, walkableNeighbors, CostToNeighbor, h, NullCoord);
 		}
 
 		public static IEnumerable<PathInfo<Coord>> AStarSearchStraight(Coord start, Coord goal, Func<Coord, IEnumerable<Coord>> walkableNeighbors)
 		{
 			//use straightness as tie breaker
 			float h(Coord a) => GridCostFunctions.DiagonalDistance(a, goal) + GridCostFunctions.Straightness(start, a, goal) * 0.001f;
-			return PathFinding.AStarSearch(start, goal, walkableNeighbors, CostToNeighbor, h, NullCoord);
+			return Algorithms.AStarSearch(start, goal, walkableNeighbors, CostToNeighbor, h, NullCoord);
 		}
 	}
 }

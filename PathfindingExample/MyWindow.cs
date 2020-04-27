@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using Example.View;
 using OpenTK;
 using OpenTK.Input;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Example
 {

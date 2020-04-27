@@ -1,17 +1,17 @@
-using Example.Grid;
 using Example.Model;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using PathFinder;
+using PathFinder.Grid;
 
 namespace Example.View
 {
-	class GridVisual : Bounded
+	class GridVisual
 	{
 		private readonly Vector2 gridDelta;
-		private readonly IGrid grid;
+		private readonly IReadOnlyGrid grid;
 
-		public GridVisual(IGrid grid)
+		public GridVisual(IReadOnlyGrid grid)
 		{
 			this.grid = grid;
 			gridDelta = new Vector2(2.0f / grid.Columns, 2.0f / grid.Rows);
@@ -36,7 +36,6 @@ namespace Example.View
 
 		internal void Draw(Style style, bool showArrows, PathInfo<Coord> path, Coord start, Coord goal)
 		{
-			GL.Viewport(Bounds);
 			GL.Color3(style.LineColor);
 			GL.LineWidth(style.LineWidth);
 			DrawGridLines();
@@ -52,7 +51,7 @@ namespace Example.View
 				GL.Color3(style.ArrowColor);
 				foreach (var line in path.CameFrom)
 				{
-					if (!line.Value.Equals(GridPathFinder.NullCoord)) DrawArrow(line.Value, line.Key);
+					if (!line.Value.Equals(GridPathFinderAlgorithms.NullCoord)) DrawArrow(line.Value, line.Key);
 				}
 			}
 			GL.Color3(style.PathColor);
@@ -111,9 +110,8 @@ namespace Example.View
 			}
 		}
 
-		internal (ushort column, ushort row) TransformToGrid(Point point)
+		internal (ushort column, ushort row) TransformToGrid(Vector2 coord)
 		{
-			var coord = Bounds.Transform(point); //convert pixel coordinates to [-1,1]²
 			var x = coord.X * .5f + .5f;
 			var y = coord.Y * .5f + .5f;
 			var column = (ushort)MathHelper.Clamp(x * grid.Columns, 0, grid.Columns - 1);
