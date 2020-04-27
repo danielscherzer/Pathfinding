@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Example.View;
 using OpenTK;
 using OpenTK.Input;
 
@@ -11,13 +12,13 @@ namespace Example
 	/// </summary>
 	internal class MyWindow : GameWindow
 	{
-		private readonly Model model;
-		private readonly View view;
+		private readonly Model.Model model;
+		private readonly MainView view;
 
 		internal MyWindow()
 		{
-			model = new Model();
-			view = new View(model);
+			model = new Model.Model();
+			view = new MainView(model);
 			var keyBindings = new Dictionary<Key, Tuple<Action, string>>
 			{
 				[Key.Escape] = new Tuple<Action, string>(() => Close(), "closes application"),
@@ -40,7 +41,6 @@ namespace Example
 			};
 
 			MouseDown += (s, e) => view.InputDown(e.Position);
-			MouseUp += (s, e) => view.InputUp(e.Position);
 		}
 
 		private void Step()

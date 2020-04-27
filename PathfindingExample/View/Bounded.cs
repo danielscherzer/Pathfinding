@@ -1,6 +1,6 @@
 using OpenTK;
 
-namespace Example
+namespace Example.View
 {
 	class Bounded
 	{

@@ -1,10 +1,10 @@
-namespace Example
+namespace Example.Model
 {
-	internal class Grid : IGrid
+	internal class BoolGrid : IGrid
 	{
-		private bool[,] grid;
+		private readonly bool[,] grid;
 
-		public Grid(ushort columns, ushort rows)
+		public BoolGrid(ushort columns, ushort rows)
 		{
 			grid = new bool[columns, rows];
 			for (int x = 0; x < Columns; ++x)

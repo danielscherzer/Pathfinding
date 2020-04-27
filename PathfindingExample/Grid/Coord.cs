@@ -1,4 +1,4 @@
-namespace Example
+namespace Example.Grid
 {
 	using ElementType = System.UInt16;
 

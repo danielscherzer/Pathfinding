@@ -1,10 +1,18 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2026
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PathfindingExample", "PathfindingExample\PathfindingExample.csproj", "{FB95ACB5-975F-49D8-A4A4-FB06A3620075}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PathFinder", "PathFinder\PathFinder.csproj", "{638B5CCE-2E15-427D-BD89-CF803900D4CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PathFinder", "PathFinder\PathFinder.csproj", "{638B5CCE-2E15-427D-BD89-CF803900D4CA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5DC6352C-F8FD-4A85-8E3F-F36B6E3A2C0C}"
+	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
+		CONTRIBUTING.md = CONTRIBUTING.md
+		ISSUE_TEMPLATE.md = ISSUE_TEMPLATE.md
+		LICENSE = LICENSE
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

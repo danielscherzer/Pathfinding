@@ -14,4 +14,8 @@
     <RepositoryUrl>https://github.com/danielscherzer/Pathfinding</RepositoryUrl>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Grid\" />
+  </ItemGroup>
+
 </Project>

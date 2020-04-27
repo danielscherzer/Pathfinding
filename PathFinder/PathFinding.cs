@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PathFinder
 {
-	public class PathFinding
+	public static class PathFinding
 	{
 		/// <summary>
 		/// Create a path from <paramref name="start"/> to <paramref name="goal"/> from the cameForm list
@@ -20,7 +20,7 @@ namespace PathFinder
 			while (!current.Equals(start))
 			{
 				path.Add(current);
-				if (!cameFrom.TryGetValue(current, out var value))
+				if (!cameFrom.ContainsKey(current))
 				{
 					break;
 				}

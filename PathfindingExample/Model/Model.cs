@@ -1,14 +1,15 @@
+using Example.Grid;
 using PathFinder;
 using System;
 using System.Collections.Generic;
-using static Example.GridPathFinder;
+using static Example.Grid.GridPathFinder;
 
-namespace Example
+namespace Example.Model
 {
 	class Model
 	{
-		const ushort scale = 4;
-		private readonly Grid grid = new Grid(32 * scale, 18 * scale);
+		const ushort scale = 8;
+		private readonly BoolGrid grid = new BoolGrid(32 * scale, 18 * scale);
 		private readonly Random rnd;
 
 		private IEnumerator<PathInfo<Coord>> iterator;
@@ -36,7 +37,7 @@ namespace Example
 				AStarSearchStraight,
 				GreedyBestFirstSearch,
 				BreathFirstSearch,
-				UniformCostSearch,
+				DijkstraSearch,
 			};
 
 			NewStartGoal();
@@ -152,7 +153,7 @@ namespace Example
 				foreach (var p in points) if (grid.IsPassable(p.Column, p.Row)) yield return p;
 			}
 
-			IEnumerable<Coord> WalkableNeighbors(Coord current) => Walkables(grid.Get8Neighbors(current));
+			IEnumerable<Coord> WalkableNeighbors(Coord current) => Walkables(current.Get8Neighbors(grid.Columns, grid.Rows));
 
 			foreach(var step in algorithm(Start, Goal, WalkableNeighbors)) yield return step;
 		}

@@ -1,16 +1,17 @@
+using Example.Grid;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using PathFinder;
 
-namespace Example
+namespace Example.View
 {
-	internal class View : Bounded
+	internal class MainView : Bounded
 	{
 		private readonly Style style;
-		private readonly Model model;
+		private readonly Model.Model model;
 		private readonly GridVisual gridVisual;
 
-		public View(Model model)
+		public MainView(Model.Model model)
 		{
 			style = Style.darkStyle;
 			gridVisual = new GridVisual(model.Grid);
@@ -34,10 +35,6 @@ namespace Example
 				var (column, row) = gridVisual.TransformToGrid(point);
 				model.ToggleElement(column, row);
 			}
-		}
-
-		internal void InputUp(Point position)
-		{
 		}
 
 		internal void Resize(int width, int height)
