@@ -29,7 +29,6 @@ namespace Example.Model
 
 			grid.CreateRandomWalkObstacles();
 			//grid.CreateMazeObstacles();
-			//NewStartGoal();
 
 			algorithms = new List<Algorithm>
 			{
