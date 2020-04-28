@@ -1,6 +1,6 @@
 using System;
 
-namespace PathFinder.Grid
+namespace Zenseless.PathFinder.Grid
 {
 	public static class GridCostFunctions
 	{

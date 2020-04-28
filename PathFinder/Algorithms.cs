@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace PathFinder
+namespace Zenseless.PathFinder
 {
 	public static class Algorithms
 	{

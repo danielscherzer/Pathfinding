@@ -1,8 +1,8 @@
 using Example.Model;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using PathFinder;
-using PathFinder.Grid;
+using Zenseless.PathFinder;
+using Zenseless.PathFinder.Grid;
 
 namespace Example.View
 {

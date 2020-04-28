@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PathFinder.Grid
+namespace Zenseless.PathFinder.Grid
 {
 	public static class CoordNeighbors
 	{

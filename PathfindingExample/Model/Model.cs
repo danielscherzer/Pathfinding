@@ -1,4 +1,4 @@
-using PathFinder.Grid;
+using Zenseless.PathFinder.Grid;
 using System;
 using System.Collections.Generic;
 using static Example.Model.GridPathFinderAlgorithms;

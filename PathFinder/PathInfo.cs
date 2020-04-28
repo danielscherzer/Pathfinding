@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace PathFinder
+namespace Zenseless.PathFinder
 {
 	public struct PathInfo<NODE>
 	{

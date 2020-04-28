@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace PathFinder
+namespace Zenseless.PathFinder
 {
 	/// <summary>
 	/// A priority queue based on a heap using a <seealso cref="List{T}"/> as data container. 

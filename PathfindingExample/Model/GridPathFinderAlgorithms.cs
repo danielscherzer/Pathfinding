@@ -1,5 +1,5 @@
-using PathFinder;
-using PathFinder.Grid;
+using Zenseless.PathFinder;
+using Zenseless.PathFinder.Grid;
 using System;
 using System.Collections.Generic;
 

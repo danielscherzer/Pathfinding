@@ -1,4 +1,4 @@
-namespace PathFinder.Grid
+namespace Zenseless.PathFinder.Grid
 {
 	using System;
 	using ElementType = System.UInt16;
