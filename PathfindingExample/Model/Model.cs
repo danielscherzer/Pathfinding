@@ -1,4 +1,3 @@
-using PathFinder;
 using PathFinder.Grid;
 using System;
 using System.Collections.Generic;
@@ -9,19 +8,27 @@ namespace Example.Model
 	class Model
 	{
 		const ushort scale = 8;
-		private readonly BoolGrid grid = new BoolGrid(32 * scale, 18 * scale);
+		private readonly BoolGrid grid = new BoolGrid(14 * scale, 18 * scale);
 		private readonly Random rnd;
+		private int _algorithmIndex = 0;
+		private readonly List<AlgorithmEvaluation> algorithmEvaluations = new List<AlgorithmEvaluation>();
 
-		private IEnumerator<PathInfo<Coord>> iterator;
-		private readonly IReadOnlyList<Algorithm> algorithms;
-		private int algorithmIndex = 0;
+		internal IReadOnlyList<AlgorithmEvaluation> AlgorithmEvaluations => algorithmEvaluations;
+		internal AlgorithmEvaluation CurrentEvaluation => AlgorithmEvaluations[AlgorithmIndex];
+		internal IReadOnlyGrid Grid => grid;
 
-		public string AlgorithmName => algorithms[algorithmIndex].Method.Name;
-		public IReadOnlyGrid Grid => grid;
-
-		public Coord Start { get; private set; } = new Coord(0, 0);
-		public Coord Goal { get; private set; } = new Coord(254, 140);
-		public PathInfo<Coord> Path { get; private set; }
+		internal Coord Start { get; private set; } = new Coord(0, 0);
+		internal Coord Goal { get; private set; } = new Coord(254, 140);
+		public int AlgorithmIndex
+		{
+			get => _algorithmIndex;
+			set
+			{
+				if (value >= AlgorithmEvaluations.Count) return;
+				if (value < 0) return;
+				_algorithmIndex = value;
+			}
+		}
 
 		public Model()
 		{
@@ -30,66 +37,26 @@ namespace Example.Model
 			grid.CreateRandomWalkObstacles();
 			//grid.CreateMazeObstacles();
 
-			algorithms = new List<Algorithm>
-			{
-				AStarSearch,
-				AStarSearchStraight,
-				GreedyBestFirstSearch,
-				BreathFirstSearch,
-				DijkstraSearch,
-			};
+			InvalidateAlgorithms();
 
 			NewStartGoal();
+			Update();
 		}
-
-		internal void SolveMode() => iterator = null;
 
 		internal void Step()
 		{
-			if (iterator is null)
-			{
-				iterator = FindPath().GetEnumerator();
-			}
-			if (iterator.MoveNext())
-			{
-				Path = iterator.Current;
-			}
+			AlgorithmEvaluations[AlgorithmIndex].FindNextStep();
 		}
 
 		internal void Update()
 		{
-			if (!(iterator is null)) return;
-			foreach (var step in FindPath())
-			{
-				Path = step;
-			}
-		}
-
-		internal void NextAlgorithm()
-		{
-			algorithmIndex = (algorithmIndex + 1) % algorithms.Count;
-			iterator = null;
-		}
-
-		internal void ToggleElement(ushort x, ushort y)
-		{
-			grid[x, y] = !grid[x, y];
-			iterator = null;
-		}
-
-		internal IEnumerable<PathInfo<Coord>> FindPath()
-		{
-			var algorithm = algorithms[algorithmIndex];
-
-			IEnumerable<Coord> WalkableNeighbors(Coord current)
-			{
-				foreach(var neighbor in current.Get8Neighbors(grid.Columns, grid.Rows))
-				{
-					if (grid.IsPassable(neighbor.Column, neighbor.Row)) yield return neighbor;
-				}
-			}
-
-			foreach (var step in algorithm(Start, Goal, WalkableNeighbors)) yield return step;
+			if (AlgorithmEvaluations[AlgorithmIndex].SteppMode) return;
+			var nextId = rnd.Next(AlgorithmEvaluations.Count);
+			//foreach(var eval in AlgorithmEvaluations)
+			//{
+			//	eval.FindPath();
+			//}
+			AlgorithmEvaluations[nextId].FindPath();
 		}
 
 		internal void NewStartGoal()
@@ -106,7 +73,30 @@ namespace Example.Model
 
 			Start = FindRandomPassablePosition();
 			Goal = FindRandomPassablePosition();
-			iterator = null;
+			InvalidateAlgorithms();
+		}
+
+		internal void ToggleElement(ushort x, ushort y)
+		{
+			grid[x, y] = !grid[x, y];
+			InvalidateAlgorithms();
+		}
+
+		private void InvalidateAlgorithms()
+		{
+			algorithmEvaluations.Clear();
+			var algorithms = new List<Algorithm>
+			{
+				BreathFirstSearch,
+				DijkstraSearch,
+				AStarSearch,
+				AStarSearchStraight,
+				GreedyBestFirstSearch,
+			};
+			foreach (var algo in algorithms)
+			{
+				algorithmEvaluations.Add(new AlgorithmEvaluation(algo, Grid, Start, Goal));
+			};
 		}
 	}
 }

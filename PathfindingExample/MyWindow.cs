@@ -3,7 +3,6 @@ using OpenTK;
 using OpenTK.Input;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Example
 {
@@ -14,24 +13,25 @@ namespace Example
 	{
 		private readonly Model.Model model;
 		private readonly MainView view;
+		private readonly Dictionary<Key, Tuple<Action, string>> keyBindings;
 
 		internal MyWindow()
 		{
 			model = new Model.Model();
 			view = new MainView(model);
-			var keyBindings = new Dictionary<Key, Tuple<Action, string>>
+			keyBindings = new Dictionary<Key, Tuple<Action, string>>
 			{
-				[Key.Escape] = new Tuple<Action, string>(() => Close(), "closes application"),
-				[Key.Space] = new Tuple<Action, string>(() => model.NewStartGoal(), "creates new random start and goal positions"),
+				[Key.Enter] = new Tuple<Action, string>(() => model.NewStartGoal(), "creates new random start and goal positions"),
 				[Key.A] = new Tuple<Action, string>(() => view.ShowArrows = !view.ShowArrows, "toggle arrows"),
-				[Key.Tab] = new Tuple<Action, string>(() => model.NextAlgorithm(), "cycles algorithm"),
 				[Key.S] = new Tuple<Action, string>(() => Step(), "activates step mode for algorithm"),
+				[Key.Escape] = new Tuple<Action, string>(() => Close(), "closes application"),
 			};
-
-			foreach (var keyBinding in keyBindings)
+			for(int i = 0; i < model.AlgorithmEvaluations.Count; ++i)
 			{
-				Console.WriteLine($"{keyBinding.Key.ToString().PadRight(10, '.')} {keyBinding.Value.Item2}");
+				int copy = i; // for lambda capturing
+				keyBindings[Key.Number1 + i] = new Tuple<Action, string>(() => { model.AlgorithmIndex = copy; }, $"Use {model.AlgorithmEvaluations[i].AlgorithmName} algorithm");
 			}
+
 			KeyDown += (s, a) =>
 			{
 				if (keyBindings.TryGetValue(a.Key, out var data))
@@ -46,7 +46,6 @@ namespace Example
 		private void Step()
 		{
 			model.Step();
-			Title = $"grid size={model.Grid.Columns}x{model.Grid.Rows}; {model.AlgorithmName}; path length={model.Path.Path.Count}";
 		}
 
 		/// <summary>
@@ -56,7 +55,7 @@ namespace Example
 		protected override void OnRenderFrame(FrameEventArgs arguments)
 		{
 			base.OnRenderFrame(arguments); // call the GameWindows implementation before executing the example code
-			view.Draw(model.Path);
+			view.Draw(model.CurrentEvaluation.Path);
 			SwapBuffers(); // buffer swap needed for double buffering
 		}
 
@@ -67,11 +66,22 @@ namespace Example
 		protected override void OnUpdateFrame(FrameEventArgs arguments)
 		{
 			base.OnUpdateFrame(arguments);
-			var sw = new Stopwatch();
-			sw.Start();
+			Console.SetCursorPosition(0, 0);
+			Console.ForegroundColor = ConsoleColor.White;
+			foreach (var keyBinding in keyBindings)
+			{
+				LogFullLine($"{keyBinding.Key.ToString().PadRight(10, '.')} {keyBinding.Value.Item2}");
+			}
+			Title = model.CurrentEvaluation.AlgorithmName;
+
 			model.Update();
-			sw.Stop();
-			Title = $"grid size={model.Grid.Columns}x{model.Grid.Rows}; {model.AlgorithmName}; path length={model.Path.Path.Count} in {sw.ElapsedMilliseconds}ms";
+			LogFullLine($"grid size={model.Grid.Columns}x{model.Grid.Rows}");
+			for (int i = 0; i < model.AlgorithmEvaluations.Count; ++i)
+			{
+				var eval = model.AlgorithmEvaluations[i];
+				Console.ForegroundColor = model.AlgorithmIndex == i ? ConsoleColor.Red : ConsoleColor.White;
+				LogFullLine($"{eval.AlgorithmName,-25} path length={eval.Path.Path.Count, -4} avg={eval.Avg,-8:F2}ms value={eval.EvaluationTime.TotalMilliseconds}ms");
+			}
 		}
 
 		/// <summary>
@@ -82,6 +92,16 @@ namespace Example
 		{
 			base.OnResize(arguments); // call the GameWindows implementation before executing the example code
 			view.Resize(Width, Height);
+		}
+
+		public static void LogFullLine(string message)
+		{
+			var lines = message.Split(Environment.NewLine);
+			foreach(var line in lines)
+			{
+				var fill = new string(' ', Console.BufferWidth - line.Length - 1);
+				Console.WriteLine($"{line}{fill}");
+			}
 		}
 	}
 }

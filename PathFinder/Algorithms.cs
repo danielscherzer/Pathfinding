@@ -35,8 +35,8 @@ namespace PathFinder
 		/// Breadth first a.k.a. flood fill search with early exit
 		/// </summary>
 		/// <typeparam name="NODE">Type of a graph node</typeparam>
-		/// <param name="start">node of the path</param>
-		/// <param name="goal">node of the path</param>
+		/// <param name="start">start node of the path</param>
+		/// <param name="goal">goal node of the path</param>
 		/// <param name="neighborNodes">functor that returns all neighbors for a given node</param>
 		/// <param name="nullNode">is an empty, non existing node. Needed to signify the predecessor of <paramref name="start"/></param>
 		/// <returns></returns>
@@ -77,8 +77,8 @@ namespace PathFinder
 		/// Dijkstra’s Algorithm (a.k.a. Uniform Cost Search
 		/// </summary>
 		/// <typeparam name="NODE">Type of a graph node</typeparam>
-		/// <param name="start">node of the path</param>
-		/// <param name="goal">node of the path</param>
+		/// <param name="start">start node of the path</param>
+		/// <param name="goal">goal node of the path</param>
 		/// <param name="neighborNodes">functor that returns all neighbors for a given node</param>
 		/// <param name="edgeCost">returns the edge cost netween two nodes</param>
 		/// <param name="nullNode">is an empty, non existing node. Needed to signify the predecessor of <paramref name="start"/></param>
@@ -124,8 +124,8 @@ namespace PathFinder
 		/// Greedy Best First Search uses estimated cost to goal for prioritizing expansion of neighbors.
 		/// </summary>
 		/// <typeparam name="NODE">Type of a graph node</typeparam>
-		/// <param name="start">node of the path</param>
-		/// <param name="goal">node of the path</param>
+		/// <param name="start">start node of the path</param>
+		/// <param name="goal">goal node of the path</param>
 		/// <param name="neighborNodes">functor that returns all neighbors for a given node</param>
 		/// <param name="costToGoal">functor that returns the estimated cost to the goal for a given node</param>
 		/// <param name="nullNode">is an empty, non existing node. Needed to signify the predecessor of <paramref name="start"/></param>
@@ -169,8 +169,8 @@ namespace PathFinder
 		/// </summary>
 		/// <typeparam name="NODE"></typeparam>
 		/// <typeparam name="NODE">Type of a graph node</typeparam>
-		/// <param name="start">node of the path</param>
-		/// <param name="goal">node of the path</param>
+		/// <param name="start">start node of the path</param>
+		/// <param name="goal">goal node of the path</param>
 		/// <param name="neighborNodes">functor that returns all neighbors for a given node</param>
 		/// <param name="edgeCost">returns the edge cost netween two nodes</param>
 		/// <param name="costToGoal">functor that returns the estimated cost to the goal for a given node</param>
