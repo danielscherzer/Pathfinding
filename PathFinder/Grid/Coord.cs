@@ -38,6 +38,8 @@ namespace Zenseless.PathFinder.Grid
 
 		public override int GetHashCode() => System.HashCode.Combine(Column, Row);
 
+		public static readonly Coord Null = new Coord(ushort.MaxValue, ushort.MaxValue);
+
 		public static bool operator ==(Coord left, Coord right)
 		{
 			return left.Equals(right);

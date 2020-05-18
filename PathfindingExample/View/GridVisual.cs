@@ -51,7 +51,7 @@ namespace Example.View
 				GL.Color3(style.ArrowColor);
 				foreach (var line in path.CameFrom)
 				{
-					if (!line.Value.Equals(GridPathFinderAlgorithms.NullCoord)) DrawArrow(line.Value, line.Key);
+					if (!line.Value.Equals(Coord.Null)) DrawArrow(line.Value, line.Key);
 				}
 			}
 			GL.Color3(style.PathColor);
