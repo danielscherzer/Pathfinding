@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Zenseless.Spatial;
 
 namespace Example.Model
 {
 	public static class GridInitializers
 	{
-		public static void CreateMazeObstacles(this BoolGrid grid)
+		public static void CreateMazeObstacles(this Grid<bool> grid)
 		{
 			var rnd = new Random(24);
 			//full of obstacles
@@ -40,7 +39,7 @@ namespace Example.Model
 				}
 			}
 		}
-		public static void CreateRandomWalkObstacles(this BoolGrid grid)
+		public static void CreateRandomWalkObstacles(this Grid<bool> grid)
 		{
 			var rnd = new Random(24);
 			//start with no obstacles
@@ -76,7 +75,7 @@ namespace Example.Model
 			}
 		}
 
-		private static void SetModulo(this BoolGrid grid, ushort x, ushort y, bool value)
+		private static void SetModulo(this Grid<bool> grid, ushort x, ushort y, bool value)
 		{
 			grid[(ushort)(x % grid.Columns), (ushort)(y % grid.Rows)] = value;
 		}

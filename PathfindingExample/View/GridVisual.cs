@@ -1,17 +1,17 @@
-using Example.Model;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Zenseless.PathFinder;
 using Zenseless.PathFinder.Grid;
+using Zenseless.Spatial;
 
 namespace Example.View
 {
 	class GridVisual
 	{
 		private readonly Vector2 gridDelta;
-		private readonly IReadOnlyGrid grid;
+		private readonly IReadOnlyGrid<bool> grid;
 
-		public GridVisual(IReadOnlyGrid grid)
+		public GridVisual(IReadOnlyGrid<bool> grid)
 		{
 			this.grid = grid;
 			gridDelta = new Vector2(2.0f / grid.Columns, 2.0f / grid.Rows);
@@ -102,7 +102,7 @@ namespace Example.View
 				for (ushort v = 0; v < grid.Rows; ++v)
 				{
 					var min = Convert(new Coord(u, v));
-					if (!grid.IsPassable(u, v))
+					if (!grid[u, v])
 					{
 						DrawQuad(min, gridDelta);
 					}

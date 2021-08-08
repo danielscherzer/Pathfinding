@@ -1,6 +1,7 @@
-using Zenseless.PathFinder.Grid;
 using System;
 using System.Collections.Generic;
+using Zenseless.PathFinder.Grid;
+using Zenseless.Spatial;
 using static Example.Model.GridPathFinderAlgorithms;
 
 namespace Example.Model
@@ -8,14 +9,14 @@ namespace Example.Model
 	class Model
 	{
 		const ushort scale = 8;
-		private readonly BoolGrid grid = new BoolGrid(14 * scale, 18 * scale);
+		private readonly Grid<bool> grid = new(14 * scale, 18 * scale);
 		private readonly Random rnd;
 		private int _algorithmIndex = 0;
-		private readonly List<AlgorithmEvaluation> algorithmEvaluations = new List<AlgorithmEvaluation>();
+		private readonly List<AlgorithmEvaluation> algorithmEvaluations = new();
 
 		internal IReadOnlyList<AlgorithmEvaluation> AlgorithmEvaluations => algorithmEvaluations;
 		internal AlgorithmEvaluation CurrentEvaluation => AlgorithmEvaluations[AlgorithmIndex];
-		internal IReadOnlyGrid Grid => grid;
+		internal IReadOnlyGrid<bool> Grid => grid;
 
 		internal Coord Start { get; private set; } = new Coord(0, 0);
 		internal Coord Goal { get; private set; } = new Coord(254, 140);
@@ -67,7 +68,7 @@ namespace Example.Model
 				do
 				{
 					pos = new Coord(rnd.Next(Grid.Columns), rnd.Next(Grid.Rows));
-				} while (!Grid.IsPassable(pos.Column, pos.Row));
+				} while (!Grid[pos.Column, pos.Row]);
 				return pos;
 			}
 

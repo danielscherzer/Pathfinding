@@ -1,8 +1,9 @@
-﻿using Zenseless.PathFinder;
-using Zenseless.PathFinder.Grid;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Zenseless.PathFinder;
+using Zenseless.PathFinder.Grid;
+using Zenseless.Spatial;
 using static Example.Model.GridPathFinderAlgorithms;
 
 namespace Example.Model
@@ -16,15 +17,15 @@ namespace Example.Model
 		public double Avg => sum / count;
 
 		private readonly Algorithm algorithm;
-		private readonly IReadOnlyGrid grid;
+		private readonly IReadOnlyGrid<bool> grid;
 		private readonly Coord start;
 		private readonly Coord goal;
 		private IEnumerator<PathInfo<Coord>> iterator;
-		private readonly Stopwatch stopWatch = new Stopwatch();
+		private readonly Stopwatch stopWatch = new();
 		private double sum;
 		private int count;
 
-		public AlgorithmEvaluation(Algorithm algorithm, IReadOnlyGrid grid, Coord start, Coord goal)
+		public AlgorithmEvaluation(Algorithm algorithm, IReadOnlyGrid<bool> grid, Coord start, Coord goal)
 		{
 			this.algorithm = algorithm;
 			this.grid = grid;
@@ -64,7 +65,7 @@ namespace Example.Model
 			{
 				foreach (var neighbor in current.Get8Neighbors(grid.Columns, grid.Rows))
 				{
-					if (grid.IsPassable(neighbor.Column, neighbor.Row)) yield return neighbor;
+					if (grid[neighbor.Column, neighbor.Row]) yield return neighbor;
 				}
 			}
 			foreach (var step in algorithm(start, goal, WalkableNeighbors)) yield return step;

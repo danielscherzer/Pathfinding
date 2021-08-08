@@ -1,7 +1,7 @@
-using Zenseless.PathFinder;
-using Zenseless.PathFinder.Grid;
 using System;
 using System.Collections.Generic;
+using Zenseless.PathFinder;
+using Zenseless.PathFinder.Grid;
 
 namespace Example.Model
 {

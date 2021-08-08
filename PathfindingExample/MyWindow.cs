@@ -26,7 +26,7 @@ namespace Example
 				[Key.S] = new Tuple<Action, string>(() => Step(), "activates step mode for algorithm"),
 				[Key.Escape] = new Tuple<Action, string>(() => Close(), "closes application"),
 			};
-			for(int i = 0; i < model.AlgorithmEvaluations.Count; ++i)
+			for (int i = 0; i < model.AlgorithmEvaluations.Count; ++i)
 			{
 				int copy = i; // for lambda capturing
 				keyBindings[Key.Number1 + i] = new Tuple<Action, string>(() => { model.AlgorithmIndex = copy; }, $"Use {model.AlgorithmEvaluations[i].AlgorithmName} algorithm");
@@ -80,7 +80,7 @@ namespace Example
 			{
 				var eval = model.AlgorithmEvaluations[i];
 				Console.ForegroundColor = model.AlgorithmIndex == i ? ConsoleColor.Red : ConsoleColor.White;
-				LogFullLine($"{eval.AlgorithmName,-25} path length={eval.Path.Path.Count, -4} avg={eval.Avg,-8:F2}ms value={eval.EvaluationTime.TotalMilliseconds}ms");
+				LogFullLine($"{eval.AlgorithmName,-25} path length={eval.Path.Path.Count,-4} avg={eval.Avg,-8:F2}ms value={eval.EvaluationTime.TotalMilliseconds}ms");
 			}
 		}
 
@@ -97,7 +97,7 @@ namespace Example
 		public static void LogFullLine(string message)
 		{
 			var lines = message.Split(Environment.NewLine);
-			foreach(var line in lines)
+			foreach (var line in lines)
 			{
 				var fill = new string(' ', Console.BufferWidth - line.Length - 1);
 				Console.WriteLine($"{line}{fill}");
