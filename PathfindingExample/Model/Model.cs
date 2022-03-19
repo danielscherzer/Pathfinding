@@ -6,9 +6,9 @@ using static Example.Model.GridPathFinderAlgorithms;
 
 namespace Example.Model
 {
-	class Model
+	internal class Model
 	{
-		const ushort scale = 8;
+		private const ushort scale = 8;
 		private readonly Grid<bool> grid = new(14 * scale, 18 * scale);
 		private readonly Random rnd;
 		private int _algorithmIndex = 0;

@@ -1,12 +1,12 @@
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using Zenseless.PathFinder;
 using Zenseless.PathFinder.Grid;
 using Zenseless.Spatial;
 
 namespace Example.View
 {
-	class GridVisual
+	internal class GridVisual
 	{
 		private readonly Vector2 gridDelta;
 		private readonly IReadOnlyGrid<bool> grid;
@@ -36,32 +36,32 @@ namespace Example.View
 
 		internal void Draw(Style style, bool showArrows, PathInfo<Coord> path, Coord start, Coord goal)
 		{
-			GL.Color3(style.LineColor);
+			GL.Color4(style.LineColor);
 			GL.LineWidth(style.LineWidth);
 			DrawGridLines();
-			GL.Color3(style.ObstacleColor);
+			GL.Color4(style.ObstacleColor);
 			DrawObstacles();
-			GL.Color3(style.VisitedColor);
+			GL.Color4(style.VisitedColor);
 			foreach (var v in path.Visited)
 			{
 				DrawCell(v, style.VisitedCellSize);
 			}
 			if (showArrows)
 			{
-				GL.Color3(style.ArrowColor);
+				GL.Color4(style.ArrowColor);
 				foreach (var line in path.CameFrom)
 				{
 					if (!line.Value.Equals(Coord.Null)) DrawArrow(line.Value, line.Key);
 				}
 			}
-			GL.Color3(style.PathColor);
+			GL.Color4(style.PathColor);
 			foreach (var c in path.Path)
 			{
 				DrawCell(c, style.PathPointSize);
 			}
-			GL.Color3(style.StartPointColor);
+			GL.Color4(style.StartPointColor);
 			DrawCell(start, style.StartEndPointSize);
-			GL.Color3(style.EndPointColor);
+			GL.Color4(style.EndPointColor);
 			DrawCell(goal, style.StartEndPointSize);
 		}
 

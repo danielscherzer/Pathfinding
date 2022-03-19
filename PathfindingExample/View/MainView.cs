@@ -1,5 +1,5 @@
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using Zenseless.PathFinder;
 using Zenseless.PathFinder.Grid;
 
@@ -10,7 +10,7 @@ namespace Example.View
 		private readonly Style style;
 		private readonly Model.Model model;
 		private readonly GridVisual gridVisual;
-		private Rectangle bounds;
+		private Box2 bounds;
 
 		public MainView(Model.Model model)
 		{
@@ -28,7 +28,7 @@ namespace Example.View
 			gridVisual.Draw(style, ShowArrows, path, model.Start, model.Goal);
 		}
 
-		internal void InputDown(Point point)
+		internal void InputDown(Vector2 point)
 		{
 			var coord = bounds.Transform(point); //convert pixel coordinates to [-1,1]²
 			var (column, row) = gridVisual.TransformToGrid(coord);
@@ -37,8 +37,8 @@ namespace Example.View
 
 		internal void Resize(int width, int height)
 		{
-			bounds = new Rectangle(0, 0, width, height);
-			GL.Viewport(bounds);
+			bounds = new Box2(0, 0, width, height);
+			GL.Viewport(0, 0, width, height);
 		}
 	}
 }

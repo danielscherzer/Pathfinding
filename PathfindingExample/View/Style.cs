@@ -1,52 +1,52 @@
-using OpenTK;
+using OpenTK.Mathematics;
 
 namespace Example.View
 {
-	struct Style
+	internal struct Style
 	{
-		public Color ArrowColor { get; set; }
-		public Color Background { get; set; }
-		public Color LineColor { get; set; }
+		public Color4 ArrowColor { get; set; }
+		public Color4 Background { get; set; }
+		public Color4 LineColor { get; set; }
 		public float LineWidth { get; set; }
-		public Color ObstacleColor { get; set; }
-		public Color PathColor { get; set; }
+		public Color4 ObstacleColor { get; set; }
+		public Color4 PathColor { get; set; }
 		public float PathPointSize { get; set; }
-		public Color StartPointColor { get; set; }
-		public Color EndPointColor { get; set; }
+		public Color4 StartPointColor { get; set; }
+		public Color4 EndPointColor { get; set; }
 		public float StartEndPointSize { get; set; }
 		public float VisitedCellSize { get; set; }
-		public Color VisitedColor { get; set; }
+		public Color4 VisitedColor { get; set; }
 
-		public static Style darkStyle = new Style
+		public static Style darkStyle = new()
 		{
-			ArrowColor = Color.White,
-			Background = Color.Black,
-			LineColor = Color.Gray,
+			ArrowColor = Color4.White,
+			Background = Color4.Black,
+			LineColor = Color4.Gray,
 			LineWidth = 1.0f,
-			ObstacleColor = Color.DarkGoldenrod,
-			PathColor = Color.LightBlue,
+			ObstacleColor = Color4.DarkGoldenrod,
+			PathColor = Color4.LightBlue,
 			PathPointSize = 0.5f,
-			StartPointColor = Color.Green,
-			EndPointColor = Color.Red,
+			StartPointColor = Color4.Green,
+			EndPointColor = Color4.Red,
 			StartEndPointSize = 0.8f,
 			VisitedCellSize = 0.8f,
-			VisitedColor = Color.FromArgb(255, 50, 50, 50),
+			VisitedColor = new Color4(50, 50, 50, 255),
 		};
 
-		public static Style lightStyle = new Style
+		public static Style lightStyle = new()
 		{
-			ArrowColor = Color.Black,
-			Background = Color.White,
-			LineColor = Color.LightGray,
+			ArrowColor = Color4.Black,
+			Background = Color4.White,
+			LineColor = Color4.LightGray,
 			LineWidth = 1.0f,
-			ObstacleColor = Color.DarkGoldenrod,
-			PathColor = Color.CornflowerBlue,
+			ObstacleColor = Color4.DarkGoldenrod,
+			PathColor = Color4.CornflowerBlue,
 			PathPointSize = 0.5f,
-			StartPointColor = Color.Green,
-			EndPointColor = Color.Red,
+			StartPointColor = Color4.Green,
+			EndPointColor = Color4.Red,
 			StartEndPointSize = 0.8f,
 			VisitedCellSize = 0.8f,
-			VisitedColor = Color.FromArgb(255, 235, 235, 255),
+			VisitedColor = new Color4(235, 235, 255, 255),
 		};
 	}
 }
