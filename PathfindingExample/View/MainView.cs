@@ -1,5 +1,6 @@
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
+using Zenseless.OpenTK;
 using Zenseless.PathFinder;
 using Zenseless.PathFinder.Grid;
 
@@ -10,7 +11,9 @@ namespace Example.View
 		private readonly Style style;
 		private readonly Model.Model model;
 		private readonly GridVisual gridVisual;
-		private Box2 bounds;
+		private readonly Viewport viewport = new();
+		private Matrix4 mtxAspect;
+		private Matrix4 fromViewportToWorld;
 
 		public MainView(Model.Model model)
 		{
@@ -25,20 +28,22 @@ namespace Example.View
 		public void Draw(PathInfo<Coord> path)
 		{
 			GL.Clear(ClearBufferMask.ColorBufferBit); // clear the screen
+			GL.LoadMatrix(ref mtxAspect);
 			gridVisual.Draw(style, ShowArrows, path, model.Start, model.Goal);
 		}
 
 		internal void InputDown(Vector2 point)
 		{
-			var coord = bounds.Transform(point); //convert pixel coordinates to [-1,1]²
+			var coord = point.Transform(fromViewportToWorld);
 			var (column, row) = gridVisual.TransformToGrid(coord);
 			model.ToggleElement(column, row);
 		}
 
 		internal void Resize(int width, int height)
 		{
-			bounds = new Box2(0, 0, width, height);
-			GL.Viewport(0, 0, width, height);
+			viewport.Resize(width, height);
+			mtxAspect = Transformation2d.Scale(viewport.InvAspectRatio, 1f);
+			fromViewportToWorld = Transformation2d.Combine(viewport.InvViewportMatrix, mtxAspect.Inverted());
 		}
 	}
 }
