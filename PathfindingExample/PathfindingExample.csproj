@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Zenseless.OpenTK" Version="0.1.38" />
-    <PackageReference Include="Zenseless.Spatial" Version="0.1.8" />
+    <PackageReference Include="Zenseless.OpenTK" Version="0.1.40" />
+    <PackageReference Include="Zenseless.Spatial" Version="0.1.12" />
   </ItemGroup>
 
   <ItemGroup>
