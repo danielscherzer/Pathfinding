@@ -2,11 +2,11 @@
 using Example;
 using Example.Model;
 using Example.View;
-using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
+using Zenseless.OpenTK;
 
 Model model = new();
-GameWindow window = new(GameWindowSettings.Default, new NativeWindowSettings { Profile = ContextProfile.Compatability });
+GameWindow window = new(GameWindowSettings.Default, ImmediateMode.NativeWindowSettings);
 MainView view = new(model);
 Controller controller = new(model, view);
 controller.Close += window.Close;
