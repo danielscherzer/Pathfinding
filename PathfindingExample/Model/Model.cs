@@ -8,8 +8,8 @@ namespace Example.Model
 {
 	internal class Model
 	{
-		private const ushort scale = 8;
-		private readonly Grid<bool> grid = new(14 * scale, 18 * scale);
+		private const ushort scale = 1;
+		private readonly Grid<bool> grid = new(14 * scale, 14 * scale);
 		private readonly Random rnd;
 		private int _algorithmIndex = 0;
 		private readonly List<AlgorithmEvaluation> algorithmEvaluations = new();
@@ -28,6 +28,7 @@ namespace Example.Model
 				if (value >= AlgorithmEvaluations.Count) return;
 				if (value < 0) return;
 				_algorithmIndex = value;
+				//InvalidateAlgorithms();
 			}
 		}
 
@@ -51,12 +52,8 @@ namespace Example.Model
 
 		internal void Update()
 		{
-			if (AlgorithmEvaluations[AlgorithmIndex].SteppMode) return;
+			if (AlgorithmEvaluations[AlgorithmIndex].StepMode) return;
 			var nextId = rnd.Next(AlgorithmEvaluations.Count);
-			//foreach(var eval in AlgorithmEvaluations)
-			//{
-			//	eval.FindPath();
-			//}
 			AlgorithmEvaluations[nextId].FindPath();
 		}
 

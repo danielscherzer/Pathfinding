@@ -12,7 +12,7 @@ namespace Example.Model
 	{
 		internal string AlgorithmName => algorithm.Method.Name;
 		public PathInfo<Coord> Path { get; private set; } = PathInfo<Coord>.CreateEmpty();
-		public bool SteppMode => iterator != null;
+		public bool StepMode => iterator != null;
 		public TimeSpan EvaluationTime => stopWatch.Elapsed;
 		public double Avg => sum / count;
 
@@ -35,10 +35,7 @@ namespace Example.Model
 
 		internal void FindNextStep()
 		{
-			if (iterator is null)
-			{
-				iterator = StepFindPath().GetEnumerator();
-			}
+			iterator ??= StepFindPath().GetEnumerator();
 			if (iterator.MoveNext())
 			{
 				Path = iterator.Current;
@@ -47,7 +44,7 @@ namespace Example.Model
 
 		internal void FindPath()
 		{
-			if (SteppMode) return;
+			if (StepMode) return;
 			stopWatch.Restart();
 			foreach (var step in StepFindPath())
 			{

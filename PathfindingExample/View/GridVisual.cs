@@ -80,7 +80,7 @@ namespace Example.View
 		public void DrawGridLines()
 		{
 			GL.Begin(PrimitiveType.Lines);
-			for (int i = 1; i < grid.Columns; ++i)
+			for (int i = 0; i <= grid.Columns; ++i)
 			{
 				var x = gridDelta.X * i - 1.0f;
 				GL.Vertex2(x, -1.0);
