@@ -37,6 +37,5 @@ namespace Zenseless.PathFinder.Grid
 				if (bottom) yield return new Coord(pos.Column + 1, pos.Row - 1);
 			}
 		}
-
 	}
 }

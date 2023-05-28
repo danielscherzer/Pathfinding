@@ -10,7 +10,7 @@ Model model = new();
 GameWindow window = new(GameWindowSettings.Default, ImmediateMode.NativeWindowSettings);
 var monitor = Monitors.GetMonitorFromWindow(window);
 window.Size = new Vector2i(monitor.HorizontalResolution, monitor.VerticalResolution) / 2; // set window to halve monitor size
-window.VSync = VSyncMode.On; // For correct benchmarks
+window.VSync = VSyncMode.On;
 
 MainView view = new(model);
 Gui gui = new(window);
@@ -21,7 +21,6 @@ window.RenderFrame += _ =>
 	gui.Render(model, view, window.ClientSize);
 	window.SwapBuffers();
 };
-
 window.Resize += args => view.Resize(args.Width, args.Height);
 window.UpdateFrame += _ => model.Update();
 

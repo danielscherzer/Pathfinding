@@ -1,20 +1,20 @@
-﻿using ImGuiNET;
+﻿using Example.View;
+using ImGuiNET;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using System.Linq;
 using Zenseless.OpenTK;
 using Zenseless.OpenTK.GUI;
 
 namespace Example;
+
 internal class Gui
 {
-	private readonly ImGuiFacade facade;
-	private readonly GameWindow window;
-
 	public Gui(GameWindow window)
 	{
 		facade = new ImGuiFacade(window);
-		facade.LoadFontDroidSans(32f);
+		facade.LoadFontDroidSans(24f);
 		window.KeyDown += args =>
 		{
 			switch (args.Key)
@@ -23,17 +23,44 @@ internal class Gui
 			}
 		};
 		this.window = window;
+		var style = ImGui.GetStyle();
+		style.ItemSpacing.Y = 10f;
+		style.CellPadding.Y = 5f;
 	}
 
-	internal void Render(Model.Model model, View.MainView view, Vector2i clientSize)
+	internal void Render(Model.Model model, MainView view, Vector2i clientSize)
 	{
 		ImGui.NewFrame();
 
 		if(ImGui.Begin("stats", ImGuiWindowFlags.AlwaysAutoResize))
 		{
-			ImGui.Text($"grid size={model.Grid.Columns}x{model.Grid.Rows}");
-
+			Resolution(model);
 			Table(model);
+
+			if (ImGui.Button("New start"))
+			{
+				model.NewStart();
+			}
+			ImGui.SameLine();
+			if (ImGui.Button("New goal"))
+			{
+				model.NewGoal();
+			}
+			ImGui.SameLine();
+			if (ImGui.Button("Exchange"))
+			{
+				model.Exchange();
+			}
+
+			if (ImGui.Button($"Step ({keyStopMode})") || window.IsKeyDown(keyStopMode))
+			{
+				model.Step();
+			}
+			ImGui.Checkbox("Search error", ref search);
+			if(search)
+			{
+
+			}
 
 			var showArrows = view.ShowArrows;
 			if (ImGui.Checkbox("Show arrows", ref showArrows))
@@ -41,33 +68,44 @@ internal class Gui
 				view.ShowArrows = showArrows;
 			}
 
-			if (ImGui.Button("New start and goal position"))
-			{
-				model.NewStartGoal();
-			}
-			if (ImGui.Button("Step mode"))
-			{
-				model.Step();
-			}
-
-			var io = ImGui.GetIO();
-			if (!io.WantCaptureMouse && window.IsMouseButtonPressed(MouseButton.Left))
-			{
-				view.InputDown(io.MousePos.ToOpenTK());
-			}
+			GridMouse(view);
 			ImGui.End();
 		}
 		facade.Render(clientSize);	
 	}
 
+	private readonly ImGuiFacade facade;
+	private readonly GameWindow window;
+	private readonly Keys keyStopMode = Keys.Space;
+	private bool search = false;
+
+	private void GridMouse(MainView view)
+	{
+		var io = ImGui.GetIO();
+		if (!io.WantCaptureMouse && window.IsMouseButtonPressed(MouseButton.Left))
+		{
+			view.InputDown(io.MousePos.ToOpenTK());
+		}
+	}
+
+	private static void Resolution(Model.Model model)
+	{
+		ImGui.SetNextItemWidth(11.5f * ImGui.GetFontSize());
+		var resolution = new int[] { model.Grid.Columns, model.Grid.Rows };
+		if (ImGui.DragInt2("Grid resolution", ref resolution[0], 1f, 10, 512, "%i", ImGuiSliderFlags.Logarithmic))
+		{
+			model.NewGrid(resolution[0], resolution[1]);
+		}
+	}
+
 	private static void Table(Model.Model model)
 	{
-		ImGui.BeginTable("table1", 3, ImGuiTableFlags.Borders | ImGuiTableFlags.NoHostExtendX);
+		ImGui.BeginTable("table1", 4, ImGuiTableFlags.Borders | ImGuiTableFlags.NoHostExtendX);
 		ImGui.TableSetupColumn("Algorithm name");
-		ImGui.TableSetupColumn("Path length");
+		ImGui.TableSetupColumn("Path");
+		ImGui.TableSetupColumn("Cells");
 		ImGui.TableSetupColumn("AVG time");
 		ImGui.TableHeadersRow();
-
 		for (int i = 0; i < model.AlgorithmEvaluations.Count; ++i)
 		{
 			var row = model.AlgorithmEvaluations[i];
@@ -78,6 +116,8 @@ internal class Gui
 			}
 			ImGui.TableNextColumn();
 			ImGui.Text($"{row.Path.Path.Count}");
+			ImGui.TableNextColumn();
+			ImGui.Text($"{row.Path.Visited.Count()}");
 			ImGui.TableNextColumn();
 			ImGui.Text($"{row.Avg:F2}ms");
 		}

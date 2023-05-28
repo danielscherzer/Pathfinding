@@ -6,36 +6,83 @@ using Zenseless.Spatial;
 
 namespace Example.View
 {
-	internal class GridVisual
+	internal static class GridVisual
 	{
-		private readonly Vector2 gridDelta;
-		private readonly IReadOnlyGrid<bool> grid;
-
-		public GridVisual(IReadOnlyGrid<bool> grid)
+		internal static (ushort column, ushort row) TransformToGrid(this IReadOnlyGrid<bool> grid, Vector2 coord)
 		{
-			this.grid = grid;
-			gridDelta = new Vector2(2.0f / grid.Columns, 2.0f / grid.Rows);
+			var x = coord.X * .5f + .5f;
+			var y = coord.Y * .5f + .5f;
+			var column = (ushort)MathHelper.Clamp(x * grid.Columns, 0, grid.Columns - 1);
+			var row = (ushort)MathHelper.Clamp(y * grid.Rows, 0, grid.Rows - 1);
+			return (column, row);
 		}
 
-		public void DrawArrow(Coord a, Coord b)
+		internal static void Draw(this IReadOnlyGrid<bool> grid, Style style, bool showArrows, PathInfo<Coord> path, Coord start, Coord goal)
 		{
-			var p1 = Convert(a) + 0.5f * gridDelta;
-			var p2 = Convert(b) + 0.5f * gridDelta;
-			var t1 = Vector2.Lerp(p1, p2, 0.2f);
-			p2 = Vector2.Lerp(p1, p2, 0.8f);
-			var dir = p2 - t1;
-			var n = 0.1f * dir.PerpendicularLeft.Normalized() * gridDelta;
-			var t2 = p2 + n;
-			var t3 = p2 - n;
-			GL.Begin(PrimitiveType.Triangles);
-			GL.Vertex2(t1);
-			GL.Vertex2(t2);
-			GL.Vertex2(t3);
-			GL.End();
-		}
+			var gridDelta = new Vector2(2.0f / grid.Columns, 2.0f / grid.Rows);
 
-		internal void Draw(Style style, bool showArrows, PathInfo<Coord> path, Coord start, Coord goal)
-		{
+			Vector2 Convert(Coord p)
+			{
+				return gridDelta * new Vector2(p.Column, p.Row) - Vector2.One;
+			}
+
+			void DrawArrow(Coord a, Coord b)
+			{
+				var p1 = Convert(a) + 0.5f * gridDelta;
+				var p2 = Convert(b) + 0.5f * gridDelta;
+				var t1 = Vector2.Lerp(p1, p2, 0.2f);
+				p2 = Vector2.Lerp(p1, p2, 0.8f);
+				var dir = p2 - t1;
+				var n = 0.1f * dir.PerpendicularLeft.Normalized() * gridDelta;
+				var t2 = p2 + n;
+				var t3 = p2 - n;
+				GL.Begin(PrimitiveType.Triangles);
+				GL.Vertex2(t1);
+				GL.Vertex2(t2);
+				GL.Vertex2(t3);
+				GL.End();
+			}
+
+			void DrawCell(Coord start, float scale)
+			{
+				var scaled = gridDelta * scale;
+				var min = Convert(start) + 0.5f * (gridDelta - gridDelta * scale);
+				DrawQuad(min, scaled);
+			}
+
+			void DrawGridLines()
+			{
+				GL.Begin(PrimitiveType.Lines);
+				for (int i = 0; i <= grid.Columns; ++i)
+				{
+					var x = gridDelta.X * i - 1.0f;
+					GL.Vertex2(x, -1.0);
+					GL.Vertex2(x, 1.0);
+				}
+				for (int i = 1; i < grid.Rows; ++i)
+				{
+					var y = gridDelta.Y * i - 1.0f;
+					GL.Vertex2(-1.0, y);
+					GL.Vertex2(1.0, y);
+				}
+				GL.End();
+			}
+
+			void DrawObstacles()
+			{
+				for (ushort u = 0; u < grid.Columns; ++u)
+				{
+					for (ushort v = 0; v < grid.Rows; ++v)
+					{
+						var min = Convert(new Coord(u, v));
+						if (!grid[u, v])
+						{
+							DrawQuad(min, gridDelta);
+						}
+					}
+				}
+			}
+
 			GL.Color4(style.LineColor);
 			GL.LineWidth(style.LineWidth);
 			DrawGridLines();
@@ -63,60 +110,6 @@ namespace Example.View
 			DrawCell(start, style.StartEndPointSize);
 			GL.Color4(style.EndPointColor);
 			DrawCell(goal, style.StartEndPointSize);
-		}
-
-		public void DrawCell(Coord start, float scale)
-		{
-			var scaled = gridDelta * scale;
-			var min = Convert(start) + 0.5f * (gridDelta - gridDelta * scale);
-			DrawQuad(min, scaled);
-		}
-
-		private Vector2 Convert(Coord p)
-		{
-			return gridDelta * new Vector2(p.Column, p.Row) - Vector2.One;
-		}
-
-		public void DrawGridLines()
-		{
-			GL.Begin(PrimitiveType.Lines);
-			for (int i = 0; i <= grid.Columns; ++i)
-			{
-				var x = gridDelta.X * i - 1.0f;
-				GL.Vertex2(x, -1.0);
-				GL.Vertex2(x, 1.0);
-			}
-			for (int i = 1; i < grid.Rows; ++i)
-			{
-				var y = gridDelta.Y * i - 1.0f;
-				GL.Vertex2(-1.0, y);
-				GL.Vertex2(1.0, y);
-			}
-			GL.End();
-		}
-
-		public void DrawObstacles()
-		{
-			for (ushort u = 0; u < grid.Columns; ++u)
-			{
-				for (ushort v = 0; v < grid.Rows; ++v)
-				{
-					var min = Convert(new Coord(u, v));
-					if (!grid[u, v])
-					{
-						DrawQuad(min, gridDelta);
-					}
-				}
-			}
-		}
-
-		internal (ushort column, ushort row) TransformToGrid(Vector2 coord)
-		{
-			var x = coord.X * .5f + .5f;
-			var y = coord.Y * .5f + .5f;
-			var column = (ushort)MathHelper.Clamp(x * grid.Columns, 0, grid.Columns - 1);
-			var row = (ushort)MathHelper.Clamp(y * grid.Rows, 0, grid.Rows - 1);
-			return (column, row);
 		}
 
 		private static void DrawQuad(Vector2 min, Vector2 size)

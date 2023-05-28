@@ -6,7 +6,7 @@ namespace Zenseless.PathFinder
 	{
 		public IReadOnlyDictionary<NODE, NODE> CameFrom;
 		public IReadOnlyList<NODE> Path;
-		public IEnumerable<NODE> Visited => CameFrom.Keys;
+		public readonly IEnumerable<NODE> Visited => CameFrom.Keys;
 
 		public static PathInfo<NODE> CreateEmpty()
 		{
