@@ -37,29 +37,45 @@ internal class Gui
 			Resolution(model);
 			Table(model);
 
+			if (ImGui.Button("New grid"))
+			{
+				model.NewGrid(model.Grid.Columns, model.Grid.Rows);
+			}
+			ImGui.SameLine();
 			if (ImGui.Button("New start"))
 			{
-				model.NewStart();
+				model.Start = model.FindRandomPassablePosition();
 			}
 			ImGui.SameLine();
 			if (ImGui.Button("New goal"))
 			{
-				model.NewGoal();
+				model.Goal = model.FindRandomPassablePosition();
 			}
 			ImGui.SameLine();
 			if (ImGui.Button("Exchange"))
 			{
-				model.Exchange();
+				(model.Start, model.Goal) = (model.Goal, model.Start);
 			}
 
 			if (ImGui.Button($"Step ({keyStopMode})") || window.IsKeyDown(keyStopMode))
 			{
-				model.Step();
+				model.CurrentEvaluation.FindNextStep();
 			}
-			ImGui.Checkbox("Search error", ref search);
+			ImGui.Checkbox("Search for difference in path length", ref search);
 			if(search)
 			{
-
+				var reference = model.AlgorithmEvaluations[0];
+				reference.FindPath();
+				model.CurrentEvaluation.FindPath();
+				if(reference.Path.Path.Count == model.CurrentEvaluation.Path.Path.Count)
+				{
+					model.Start = model.FindRandomPassablePosition();
+					model.Goal = model.FindRandomPassablePosition();
+				}
+				else
+				{
+					search = false;
+				}
 			}
 
 			var showArrows = view.ShowArrows;

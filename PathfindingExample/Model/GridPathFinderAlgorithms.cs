@@ -11,6 +11,7 @@ public static class GridPathFinderAlgorithms
 
 	public static float CostToNeighbor(Coord a, Coord b)
 	{
+		//return 1f;
 		var dx = Math.Abs(a.Column - b.Column);
 		var dy = Math.Abs(a.Row - b.Row);
 		var D2 = MathF.Sqrt(2f);

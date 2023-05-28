@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Zenseless.PathFinder.Grid;
+using Zenseless.Patterns;
 using Zenseless.Spatial;
 using static Example.Model.GridPathFinderAlgorithms;
 
@@ -8,17 +10,51 @@ namespace Example.Model;
 
 internal class Model
 {
-	private Grid<bool> grid;
-	private readonly Random rnd;
-	private int _algorithmIndex = 0;
-	private readonly List<AlgorithmEvaluation> algorithmEvaluations = new();
+	public Model()
+	{
+		rnd = new Random(24);
+		List<AlgorithmEvaluation> InvalidateAlgorithms()
+		{
+			var algorithms = new Algorithm[]
+			{
+			BreathFirstSearch,
+			DijkstraSearch,
+			AStarSearch,
+			AStarSearchStraight,
+			GreedyBestFirstSearch,
+			};
+			return algorithms.Select(algo => new AlgorithmEvaluation(algo, Grid, Start, Goal)).ToList();
+		}
+		algorithmEvaluations = new(InvalidateAlgorithms);
+		NewGrid(100, 100);
+	}
 
-	internal IReadOnlyList<AlgorithmEvaluation> AlgorithmEvaluations => algorithmEvaluations;
+	internal IReadOnlyList<AlgorithmEvaluation> AlgorithmEvaluations => algorithmEvaluations.Value;
+	
 	internal AlgorithmEvaluation CurrentEvaluation => AlgorithmEvaluations[AlgorithmIndex];
+	
 	internal IReadOnlyGrid<bool> Grid => grid;
 
-	internal Coord Start { get; private set; } = new Coord(0, 0);
-	internal Coord Goal { get; private set; } = new Coord(254, 140);
+	internal Coord Start
+	{
+		get => start; 
+		set
+		{
+			start = value;
+			algorithmEvaluations.Invalidate();
+		}
+	}
+	
+	internal Coord Goal
+	{
+		get => goal;
+		set
+		{
+			goal = value;
+			algorithmEvaluations.Invalidate();
+		}
+	}
+
 	public int AlgorithmIndex
 	{
 		get => _algorithmIndex;
@@ -27,64 +63,11 @@ internal class Model
 			if (value >= AlgorithmEvaluations.Count) return;
 			if (value < 0) return;
 			_algorithmIndex = value;
-			InvalidateAlgorithms();
+			algorithmEvaluations.Invalidate();
 		}
 	}
 
-	public Model()
-	{
-		rnd = new Random(24);
-
-		NewGrid(100, 100);
-	}
-
-	internal void Exchange()
-	{
-		(Start, Goal) = (Goal, Start);
-		InvalidateAlgorithms();
-	}
-
-	internal void NewGrid(int columns, int rows)
-	{
-		grid = new(columns, rows);
-		grid.CreateRandomWalkObstacles();
-		Start = FindRandomPassablePosition();
-		Goal = FindRandomPassablePosition();
-		InvalidateAlgorithms();
-		Update();
-	}
-
-	internal void NewGoal()
-	{
-		Goal = FindRandomPassablePosition();
-		InvalidateAlgorithms();
-	}
-
-	internal void NewStart()
-	{
-		Start = FindRandomPassablePosition();
-		InvalidateAlgorithms();
-	}
-
-	internal void Step()
-	{
-		AlgorithmEvaluations[AlgorithmIndex].FindNextStep();
-	}
-
-	internal void Update()
-	{
-		if (AlgorithmEvaluations[AlgorithmIndex].StepMode) return;
-		var nextId = rnd.Next(AlgorithmEvaluations.Count);
-		AlgorithmEvaluations[nextId].FindPath();
-	}
-
-	internal void ToggleElement(ushort x, ushort y)
-	{
-		grid[x, y] = !grid[x, y];
-		InvalidateAlgorithms();
-	}
-
-	private Coord FindRandomPassablePosition()
+	internal Coord FindRandomPassablePosition()
 	{
 		Coord pos;
 		do
@@ -94,20 +77,32 @@ internal class Model
 		return pos;
 	}
 
-	private void InvalidateAlgorithms()
+	internal void NewGrid(int columns, int rows)
 	{
-		algorithmEvaluations.Clear();
-		var algorithms = new List<Algorithm>
-		{
-			BreathFirstSearch,
-			DijkstraSearch,
-			AStarSearch,
-			AStarSearchStraight,
-			GreedyBestFirstSearch,
-		};
-		foreach (var algo in algorithms)
-		{
-			algorithmEvaluations.Add(new AlgorithmEvaluation(algo, Grid, Start, Goal));
-		};
+		grid = new(columns, rows);
+		grid.CreateRandomWalkObstacles(rnd.Next());
+		//grid.CreateMazeObstacles(rnd.Next());
+		Start = FindRandomPassablePosition();
+		Goal = FindRandomPassablePosition();
 	}
+
+	internal void Update()
+	{
+		if (CurrentEvaluation.StepMode) return;
+		var nextId = rnd.Next(AlgorithmEvaluations.Count);
+		AlgorithmEvaluations[nextId].FindPath();
+	}
+
+	internal void ToggleElement(ushort x, ushort y)
+	{
+		grid[x, y] = !grid[x, y];
+		algorithmEvaluations.Invalidate();
+	}
+
+	private Grid<bool> grid;
+	private readonly Random rnd;
+	private int _algorithmIndex = 0;
+	private Coord start = new(0, 0);
+	private Coord goal = new(254, 140);
+	private readonly DirtyFlag<List<AlgorithmEvaluation>> algorithmEvaluations;
 }

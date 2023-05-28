@@ -11,6 +11,7 @@ GameWindow window = new(GameWindowSettings.Default, ImmediateMode.NativeWindowSe
 var monitor = Monitors.GetMonitorFromWindow(window);
 window.Size = new Vector2i(monitor.HorizontalResolution, monitor.VerticalResolution) / 2; // set window to halve monitor size
 window.VSync = VSyncMode.On;
+window.WindowState = WindowState.Maximized;
 
 MainView view = new(model);
 Gui gui = new(window);
@@ -24,4 +25,4 @@ window.RenderFrame += _ =>
 window.Resize += args => view.Resize(args.Width, args.Height);
 window.UpdateFrame += _ => model.Update();
 
-window.Run(); // start the game loop with 60Hz
+window.Run();

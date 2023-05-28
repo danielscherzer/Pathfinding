@@ -5,9 +5,9 @@ namespace Example.Model;
 
 public static class GridInitializers
 {
-	public static void CreateMazeObstacles(this Grid<bool> grid)
+	public static void CreateMazeObstacles(this Grid<bool> grid, int seed)
 	{
-		var rnd = new Random(24);
+		var rnd = new Random(seed);
 		//full of obstacles
 		for (ushort x = 0; x < grid.Columns; ++x)
 		{
@@ -39,9 +39,9 @@ public static class GridInitializers
 			}
 		}
 	}
-	public static void CreateRandomWalkObstacles(this Grid<bool> grid)
+	public static void CreateRandomWalkObstacles(this Grid<bool> grid, int seed)
 	{
-		var rnd = new Random(24);
+		var rnd = new Random(seed);
 		//start with no obstacles
 		for (ushort x = 0; x < grid.Columns; ++x)
 		{
