@@ -3,6 +3,7 @@ using ImGuiNET;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using System.Diagnostics;
 using System.Linq;
 using Zenseless.OpenTK;
 using Zenseless.OpenTK.GUI;
@@ -62,21 +63,7 @@ internal class Gui
 				model.CurrentEvaluation.FindNextStep();
 			}
 			ImGui.Checkbox("Search for difference in path length", ref search);
-			if(search)
-			{
-				var reference = model.AlgorithmEvaluations[0];
-				reference.FindPath();
-				model.CurrentEvaluation.FindPath();
-				if(reference.Path.Path.Count == model.CurrentEvaluation.Path.Path.Count)
-				{
-					model.Start = model.FindRandomPassablePosition();
-					model.Goal = model.FindRandomPassablePosition();
-				}
-				else
-				{
-					search = false;
-				}
-			}
+			Search();
 
 			var showArrows = view.ShowArrows;
 			if (ImGui.Checkbox("Show arrows", ref showArrows))
@@ -87,7 +74,29 @@ internal class Gui
 			GridMouse(view);
 			ImGui.End();
 		}
-		facade.Render(clientSize);	
+		facade.Render(clientSize);
+
+		void Search()
+		{
+			if (!search) return;
+			var reference = model.AlgorithmEvaluations[0];
+			//var time = Stopwatch.StartNew();
+			//do
+			//{
+				reference.FindPath();
+				model.CurrentEvaluation.FindPath();
+				if (reference.Path.Path.Count == model.CurrentEvaluation.Path.Path.Count)
+				{
+					model.Start = model.FindRandomPassablePosition();
+					model.Goal = model.FindRandomPassablePosition();
+				}
+				else
+				{
+					search = false;
+					//break;
+				}
+			//} while (true);
+		}
 	}
 
 	private readonly ImGuiFacade facade;

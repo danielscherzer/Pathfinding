@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Zenseless.OpenTK.GUI" Version="0.1.17" />
+    <PackageReference Include="Zenseless.OpenTK.GUI" Version="0.1.23" />
     <PackageReference Include="Zenseless.Spatial" Version="0.1.21" />
   </ItemGroup>
 
