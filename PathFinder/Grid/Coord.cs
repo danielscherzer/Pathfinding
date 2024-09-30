@@ -3,7 +3,7 @@ namespace Zenseless.PathFinder.Grid
 	using System;
 	using ElementType = System.UInt16;
 
-	public struct Coord : IEquatable<Coord>
+	public readonly struct Coord : IEquatable<Coord>
 	{
 		public Coord(int column, int row)
 		{

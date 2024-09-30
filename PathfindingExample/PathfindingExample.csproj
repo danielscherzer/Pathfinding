@@ -3,13 +3,13 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>Example</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Zenseless.OpenTK.GUI" Version="0.1.23" />
-    <PackageReference Include="Zenseless.Spatial" Version="0.1.21" />
+    <PackageReference Include="Zenseless.OpenTK.GUI" Version="0.1.28" />
+    <PackageReference Include="Zenseless.Spatial" Version="0.1.24" />
   </ItemGroup>
 
   <ItemGroup>
