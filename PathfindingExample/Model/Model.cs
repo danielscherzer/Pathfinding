@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Zenseless.PathFinder.Grid;
 using Zenseless.Patterns;
+using Zenseless.PersistentSettings;
 using Zenseless.Spatial;
 using static Example.Model.GridPathFinderAlgorithms;
 
@@ -27,6 +28,12 @@ internal class Model
 		}
 		algorithmEvaluations = new(InvalidateAlgorithms);
 		NewGrid(100, 100);
+
+		_settings.AddFromGetterSetter("grid", () => grid, v => grid = v);
+		_settings.AddFromProperty(() => Start);
+		_settings.AddFromProperty(() => Goal);
+		_settings.Load();
+
 	}
 
 	internal IReadOnlyList<AlgorithmEvaluation> AlgorithmEvaluations => algorithmEvaluations.Value;
@@ -99,10 +106,13 @@ internal class Model
 		algorithmEvaluations.Invalidate();
 	}
 
+	internal void Store() => _settings.Store();
+
 	private Grid<bool> grid;
 	private readonly Random rnd;
 	private int _algorithmIndex = 0;
 	private Coord start = new(0, 0);
 	private Coord goal = new(254, 140);
 	private readonly DirtyFlag<List<AlgorithmEvaluation>> algorithmEvaluations;
+	private readonly PersistentSettings _settings = new();
 }

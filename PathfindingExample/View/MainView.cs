@@ -31,12 +31,7 @@ internal class MainView
 		model.Grid.Draw(style, ShowArrows, path, model.Start, model.Goal);
 	}
 
-	internal void InputDown(Vector2 point)
-	{
-		var coord = point.Transform(fromViewportToWorld);
-		var (column, row) = model.Grid.TransformToGrid(coord);
-		model.ToggleElement(column, row);
-	}
+	internal Vector2 Convert(Vector2 point) => point.Transform(fromViewportToWorld);
 
 	internal void Resize(int width, int height)
 	{

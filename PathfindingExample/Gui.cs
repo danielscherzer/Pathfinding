@@ -3,7 +3,9 @@ using ImGuiNET;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using Zenseless.OpenTK;
 using Zenseless.OpenTK.GUI;
@@ -38,22 +40,21 @@ internal class Gui
 			Resolution(model);
 			Table(model);
 
-			if (ImGui.Button("New grid"))
+			if (ImGui.Button("Random grid"))
 			{
 				model.NewGrid(model.Grid.Columns, model.Grid.Rows);
 			}
 			ImGui.SameLine();
-			if (ImGui.Button("New start"))
+			if (ImGui.Button("Random start"))
 			{
 				model.Start = model.FindRandomPassablePosition();
 			}
 			ImGui.SameLine();
-			if (ImGui.Button("New goal"))
+			if (ImGui.Button("Random goal"))
 			{
 				model.Goal = model.FindRandomPassablePosition();
 			}
-			ImGui.SameLine();
-			if (ImGui.Button("Exchange"))
+			if (ImGui.Button("Exchange start and goal"))
 			{
 				(model.Start, model.Goal) = (model.Goal, model.Start);
 			}
@@ -71,7 +72,13 @@ internal class Gui
 				view.ShowArrows = showArrows;
 			}
 
-			GridMouse(view);
+			var value = (int)editMode;
+			if(ImGui.ListBox("Edit mode", ref value, Enum.GetNames(typeof(EditMode)), 3))
+			{
+				editMode = (EditMode)value;
+			}
+
+			GridMouse(model, view);
 			ImGui.End();
 		}
 		facade.Render(clientSize);
@@ -103,13 +110,28 @@ internal class Gui
 	private readonly GameWindow window;
 	private readonly Keys keyStopMode = Keys.Space;
 	private bool search = false;
+	enum EditMode { ToggleCell = 0, Start = 1, Goal = 2 };
+	private EditMode editMode = EditMode.ToggleCell;
 
-	private void GridMouse(MainView view)
+	private void GridMouse(Model.Model model, MainView view)
 	{
 		var io = ImGui.GetIO();
 		if (!io.WantCaptureMouse && window.IsMouseButtonPressed(MouseButton.Left))
 		{
-			view.InputDown(io.MousePos.ToOpenTK());
+			var pos = view.Convert(io.MousePos.ToOpenTK());
+			var (column, row) = model.Grid.TransformToGrid(pos);
+			switch (editMode)
+			{
+				case EditMode.Start:
+					model.Start = new Zenseless.PathFinder.Grid.Coord(column, row);
+					break;
+				case EditMode.ToggleCell:
+					model.ToggleElement(column, row);
+					break;
+				case EditMode.Goal:
+					model.Goal = new Zenseless.PathFinder.Grid.Coord(column, row);
+					break;
+			}
 		}
 	}
 

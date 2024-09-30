@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 namespace Zenseless.PathFinder
 {
+	//TODO: In some cases Breath-first finds shorter ways
+	//TODO: A* and A* straight sometimes have different way length
 	public static class Algorithms
 	{
 		/// <summary>

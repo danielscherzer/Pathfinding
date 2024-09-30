@@ -25,4 +25,9 @@ window.RenderFrame += _ =>
 window.Resize += args => view.Resize(args.Width, args.Height);
 window.UpdateFrame += _ => model.Update();
 
+window.Closing += _ =>
+{
+	model.Store();
+};
+
 window.Run();
