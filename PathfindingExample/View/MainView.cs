@@ -37,6 +37,7 @@ internal class MainView
 	{
 		viewport.Resize(width, height);
 		mtxAspect = Translate(width/(float)height - 1f, 0f);
+		//TODO: Fit grid mtxAspect *= Scale(1f, model.Grid.Rows / (float)model.Grid.Columns);
 		mtxAspect *= Scale(viewport.InvAspectRatio, 1f);
 		fromViewportToWorld = Combine(viewport.InvViewportMatrix, mtxAspect.Inverted());
 	}

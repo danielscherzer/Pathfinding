@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 namespace Zenseless.PathFinder
 {
-	//TODO: In some cases Breath-first finds shorter ways
-	//TODO: A* and A* straight sometimes have different way length
 	public static class Algorithms
 	{
 		/// <summary>
@@ -76,13 +74,13 @@ namespace Zenseless.PathFinder
 		}
 
 		/// <summary>
-		/// Dijkstra’s Algorithm (a.k.a. Uniform Cost Search
+		/// A version of Dijkstra’s Algorithm (Uniform Cost Search)
 		/// </summary>
 		/// <typeparam name="NODE">Type of a graph node</typeparam>
 		/// <param name="start">start node of the path</param>
 		/// <param name="goal">goal node of the path</param>
 		/// <param name="neighborNodes">functor that returns all neighbors for a given node</param>
-		/// <param name="edgeCost">returns the edge cost netween two nodes</param>
+		/// <param name="edgeCost">returns the edge cost between two nodes</param>
 		/// <param name="nullNode">is an empty, non existing node. Needed to signify the predecessor of <paramref name="start"/></param>
 		/// <returns></returns>
 		public static IEnumerable<PathInfo<NODE>> Dijkstra<NODE>(NODE start, NODE goal, Func<NODE, IEnumerable<NODE>> neighborNodes

@@ -33,7 +33,6 @@ internal class Model
 		_settings.AddFromProperty(() => Start);
 		_settings.AddFromProperty(() => Goal);
 		_settings.Load();
-
 	}
 
 	internal IReadOnlyList<AlgorithmEvaluation> AlgorithmEvaluations => algorithmEvaluations.Value;

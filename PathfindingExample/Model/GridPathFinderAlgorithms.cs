@@ -11,7 +11,7 @@ public static class GridPathFinderAlgorithms
 
 	public static float CostToNeighbor(Coord a, Coord b)
 	{
-		//return 1f;
+		return 1f; //TODO: More complicated CostToNeighbor can cause paths to be "longer" (disregarding the cost) for A* than for Breath-First. We need to take cost into account for path length.
 		var dx = Math.Abs(a.Column - b.Column);
 		var dy = Math.Abs(a.Row - b.Row);
 		var D2 = MathF.Sqrt(2f);
