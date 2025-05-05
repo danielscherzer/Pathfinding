@@ -8,7 +8,7 @@ using static Example.Model.GridPathFinderAlgorithms;
 
 namespace Example.Model;
 
-internal class AlgorithmEvaluation
+internal class AlgorithmEvaluation(Algorithm algorithm, IReadOnlyGrid<bool> grid, Coord start, Coord goal)
 {
 	internal string AlgorithmName => algorithm.Method.Name;
 	public PathInfo<Coord> Path { get; private set; } = PathInfo<Coord>.CreateEmpty();
@@ -16,22 +16,10 @@ internal class AlgorithmEvaluation
 	public TimeSpan EvaluationTime => stopWatch.Elapsed;
 	public double Avg => sum / count;
 
-	private readonly Algorithm algorithm;
-	private readonly IReadOnlyGrid<bool> grid;
-	private readonly Coord start;
-	private readonly Coord goal;
 	private IEnumerator<PathInfo<Coord>> iterator;
 	private readonly Stopwatch stopWatch = new();
 	private double sum;
 	private int count;
-
-	public AlgorithmEvaluation(Algorithm algorithm, IReadOnlyGrid<bool> grid, Coord start, Coord goal)
-	{
-		this.algorithm = algorithm;
-		this.grid = grid;
-		this.start = start;
-		this.goal = goal;
-	}
 
 	internal void FindNextStep()
 	{
