@@ -8,9 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Zenseless.OpenTK.GUI" Version="0.1.35" />
-    <PackageReference Include="Zenseless.PersistentSettings" Version="0.1.10" />
-    <PackageReference Include="Zenseless.Spatial" Version="0.1.27" />
+    <PackageReference Include="Zenseless.OpenTK.GUI" Version="0.1.45" />
+    <PackageReference Include="Zenseless.PersistentSettings" Version="0.1.11" />
+    <PackageReference Include="Zenseless.Spatial" Version="0.1.36" />
   </ItemGroup>
 
   <ItemGroup>
